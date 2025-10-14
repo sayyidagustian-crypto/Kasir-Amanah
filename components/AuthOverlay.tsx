@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { User, GUEST_USER_ID } from '../types';
 import { StaffService } from '../services/db/staff.service';
 import { StoreIcon } from './icons';
+import { useSecretSequence } from '../hooks/useSecretSequence';
+import AdminCodeModal from './AdminCodeModal';
+import DevAccessModal from './DevAccessModal';
+import DevCodePromptModal from './DevCodePromptModal'; // Import baru
 
 interface AuthOverlayProps {
     onLogin: (user: User) => void;
@@ -239,8 +243,11 @@ const LoginForm: React.FC<{ onLogin: (user: User) => void, onSwitchToSetup: () =
 
 const AuthOverlay: React.FC<AuthOverlayProps> = ({ onLogin, onSetupComplete, isInitialSetup }) => {
     const [view, setView] = useState<'login' | 'setup'>(isInitialSetup ? 'setup' : 'login');
+    const [isAdminCodeModalOpen, setIsAdminCodeModalOpen] = useState(false);
+    const [isDevAccessModalOpen, setIsDevAccessModalOpen] = useState(false);
+    const [isDevCodePromptOpen, setIsDevCodePromptOpen] = useState(false);
 
-    // Jika app memutuskan ini adalah setup awal, tapi pengguna ingin login, kita hormati.
+
     useEffect(() => {
         if (isInitialSetup) {
             setView('setup');
@@ -248,6 +255,35 @@ const AuthOverlay: React.FC<AuthOverlayProps> = ({ onLogin, onSetupComplete, isI
             setView('login');
         }
     }, [isInitialSetup]);
+
+    // Emergency Admin Login (Original SSAATT trigger is now for Dev Access)
+    // For legacy emergency admin access, let's use a different code, e.g., 'ADMIN18'
+     useSecretSequence('ADMIN18', () => {
+        console.log("Kombinasi rahasia Admin Darurat terdeteksi!");
+        setIsAdminCodeModalOpen(true);
+    });
+    
+    // New Developer Access Flow
+    useSecretSequence('SSAATT', () => {
+        console.log("Kombinasi rahasia Developer Access terdeteksi!");
+        setIsDevCodePromptOpen(true);
+    });
+
+    const handleDevLoginSuccess = async () => {
+        const allUsers = await StaffService.getAll();
+        const firstAdmin = allUsers.find(u => u.role === 'admin');
+        if (firstAdmin) {
+            onLogin(firstAdmin);
+        } else {
+            alert("Akses darurat gagal: Tidak ditemukan akun admin.");
+        }
+        setIsAdminCodeModalOpen(false);
+    };
+
+    const handleDevCodeSuccess = () => {
+        setIsDevCodePromptOpen(false);
+        setIsDevAccessModalOpen(true);
+    };
 
     return (
         <div className="fixed inset-0 bg-gray-900 flex flex-col items-center justify-center p-4 text-white transition-opacity duration-300">
@@ -266,6 +302,26 @@ const AuthOverlay: React.FC<AuthOverlayProps> = ({ onLogin, onSetupComplete, isI
                 <LoginForm 
                     onLogin={onLogin} 
                     onSwitchToSetup={() => setView('setup')} 
+                />
+            )}
+
+            {isAdminCodeModalOpen && (
+                <AdminCodeModal 
+                    onSuccess={handleDevLoginSuccess}
+                    onClose={() => setIsAdminCodeModalOpen(false)}
+                />
+            )}
+            
+            {isDevCodePromptOpen && (
+                <DevCodePromptModal
+                    onSuccess={handleDevCodeSuccess}
+                    onClose={() => setIsDevCodePromptOpen(false)}
+                />
+            )}
+
+            {isDevAccessModalOpen && (
+                <DevAccessModal 
+                    onClose={() => setIsDevAccessModalOpen(false)}
                 />
             )}
         </div>

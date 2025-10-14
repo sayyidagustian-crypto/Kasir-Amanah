@@ -3,9 +3,11 @@ import { User } from '../types';
 import { StaffService } from '../services/db/staff.service';
 import { PlusCircleIcon, Trash2Icon, XIcon } from './icons';
 
-// This component acts as a Staff Management page for Admins.
+interface AdminDashboardProps {
+  isReadOnly: boolean;
+}
 
-const AdminDashboard: React.FC = () => {
+const AdminDashboard: React.FC<AdminDashboardProps> = ({ isReadOnly }) => {
   const [staff, setStaff] = useState<User[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newStaffData, setNewStaffData] = useState({
@@ -26,6 +28,7 @@ const AdminDashboard: React.FC = () => {
   };
 
   const handleOpenModal = () => {
+    if (isReadOnly) return;
     setNewStaffData({ name: '', role: 'cashier', pin: '', email: '', password: '' });
     setIsModalOpen(true);
   };
@@ -35,6 +38,7 @@ const AdminDashboard: React.FC = () => {
   };
   
   const handleAddStaff = async () => {
+    if (isReadOnly) return;
     try {
       if (newStaffData.role === 'cashier' && newStaffData.pin.length !== 4) {
         alert("PIN kasir harus 4 digit.");
@@ -54,6 +58,7 @@ const AdminDashboard: React.FC = () => {
   };
 
   const handleDeleteStaff = async (user: User) => {
+    if (isReadOnly) return;
     if (user.role === 'admin') {
       const allUsers = await StaffService.getAll();
       const adminCount = allUsers.filter(u => u.role === 'admin').length;
@@ -72,7 +77,7 @@ const AdminDashboard: React.FC = () => {
     <div className="glassmorphism p-6 rounded-lg">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Manajemen Staf</h1>
-        <button onClick={handleOpenModal} className="flex items-center btn-glow text-white px-4 py-2 rounded-lg">
+        <button onClick={handleOpenModal} disabled={isReadOnly} className="flex items-center btn-glow text-white px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none disabled:transform-none">
           <PlusCircleIcon className="w-5 h-5 mr-2" />
           Tambah Staf
         </button>
@@ -97,7 +102,7 @@ const AdminDashboard: React.FC = () => {
                   {user.role === 'cashier' ? `PIN: ${user.pin}` : user.email}
                 </td>
                 <td className="py-4 px-6 whitespace-nowrap">
-                  <button onClick={() => handleDeleteStaff(user)} className="text-red-500 hover:text-red-400">
+                  <button onClick={() => handleDeleteStaff(user)} disabled={isReadOnly} className="text-red-500 hover:text-red-400 disabled:opacity-30 disabled:cursor-not-allowed">
                     <Trash2Icon className="w-5 h-5" />
                   </button>
                 </td>

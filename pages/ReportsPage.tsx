@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { ReportService } from '../services/db/report.service';
-import { ReportSummary, BestSellingProduct, Transaction } from '../types';
+import { MockReportService } from '../services/mock/mock-report.service';
+import { ReportSummary, BestSellingProduct, Transaction, User } from '../types';
 import { TrendingUpIcon, DollarSignIcon, PackageIcon, FileTextIcon } from '../components/icons';
-import { ReceiptModal } from '../components/ReceiptModal'; // Import komponen baru
+import { ReceiptModal } from '../components/ReceiptModal';
 
 const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount);
 };
 
-const ReportsPage: React.FC = () => {
+interface ReportsPageProps {
+    currentUser: User;
+}
+
+const ReportsPage: React.FC<ReportsPageProps> = ({ currentUser }) => {
     const [summary, setSummary] = useState<ReportSummary | null>(null);
     const [bestSellers, setBestSellers] = useState<BestSellingProduct[]>([]);
     const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -25,20 +30,30 @@ const ReportsPage: React.FC = () => {
         return d;
     });
 
+    const isReadOnly = currentUser.role === 'guest';
+    const reportProvider = isReadOnly ? MockReportService : ReportService;
+
     useEffect(() => {
         loadReports();
-    }, [startDate, endDate]);
+    }, [startDate, endDate, isReadOnly]);
     
     const loadReports = async () => {
-        const summaryData = await ReportService.getSummary(startDate, endDate);
-        const bestSellersData = await ReportService.getBestSellingProducts(startDate, endDate, 5);
-        const transactionData = await ReportService.getTransactionsByPeriod(startDate, endDate);
+        const summaryData = await reportProvider.getSummary(startDate, endDate);
+        const bestSellersData = await reportProvider.getBestSellingProducts(startDate, endDate, 5);
+        const transactionData = await reportProvider.getTransactionsByPeriod(startDate, endDate);
+        
         setSummary(summaryData);
         setBestSellers(bestSellersData);
-        setTransactions(transactionData);
+        // For guest mode, sort the mock transactions to show the latest first.
+        if (isReadOnly) {
+            setTransactions(transactionData.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
+        } else {
+            setTransactions(transactionData);
+        }
     };
 
     const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'start' | 'end') => {
+        if (isReadOnly) return;
         const date = new Date(e.target.value);
         if (type === 'start') {
             date.setHours(0, 0, 0, 0);
@@ -60,20 +75,28 @@ const ReportsPage: React.FC = () => {
             </div>
         </div>
     );
+    
+    const ReadOnlyBanner = () => (
+        <div className="bg-yellow-900/50 border border-yellow-500 text-yellow-300 px-4 py-3 rounded-lg text-center mb-6" role="alert">
+          <p><span className="font-bold">Mode Tamu (Hanya Lihat):</span> Anda dapat melihat contoh laporan, namun tidak dapat mengubah filter atau melihat detail transaksi.</p>
+        </div>
+    );
 
     return (
         <div>
-            {selectedTransaction && <ReceiptModal transaction={selectedTransaction} onClose={() => setSelectedTransaction(null)} />}
+            {selectedTransaction && !isReadOnly && <ReceiptModal transaction={selectedTransaction} onClose={() => setSelectedTransaction(null)} />}
             <h1 className="text-2xl font-bold mb-6">Laporan Penjualan</h1>
             
+            {isReadOnly && <ReadOnlyBanner />}
+
             <div className="mb-6 glassmorphism p-4 rounded-lg flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4">
                 <div className="flex items-center">
                     <label className="text-sm font-medium mr-2">Dari</label>
-                    <input type="date" value={startDate.toISOString().split('T')[0]} onChange={e => handleDateChange(e, 'start')} className="p-2 border rounded-md bg-transparent border-[var(--border-color)]"/>
+                    <input type="date" disabled={isReadOnly} value={startDate.toISOString().split('T')[0]} onChange={e => handleDateChange(e, 'start')} className="p-2 border rounded-md bg-transparent border-[var(--border-color)] disabled:opacity-50 disabled:cursor-not-allowed"/>
                 </div>
                 <div className="flex items-center">
                     <label className="text-sm font-medium mr-2">Sampai</label>
-                    <input type="date" value={endDate.toISOString().split('T')[0]} onChange={e => handleDateChange(e, 'end')} className="p-2 border rounded-md bg-transparent border-[var(--border-color)]"/>
+                    <input type="date" disabled={isReadOnly} value={endDate.toISOString().split('T')[0]} onChange={e => handleDateChange(e, 'end')} className="p-2 border rounded-md bg-transparent border-[var(--border-color)] disabled:opacity-50 disabled:cursor-not-allowed"/>
                 </div>
             </div>
 
@@ -116,7 +139,7 @@ const ReportsPage: React.FC = () => {
                             </thead>
                             <tbody className="divide-y divide-[var(--border-color)] md:divide-y-0">
                                 {transactions.map(t => (
-                                    <tr key={t.id} onClick={() => setSelectedTransaction(t)} className="hover:bg-white/5 cursor-pointer transition-colors">
+                                    <tr key={t.id} onClick={() => !isReadOnly && setSelectedTransaction(t)} className={`hover:bg-white/5 transition-colors ${!isReadOnly && 'cursor-pointer'}`}>
                                         <td data-label="Waktu" className="py-3 px-4 whitespace-nowrap text-sm">{new Date(t.createdAt).toLocaleString('id-ID')}</td>
                                         <td data-label="ID Transaksi" className="py-3 px-4 whitespace-nowrap text-sm font-mono">{t.id}</td>
                                         <td data-label="Total" className="py-3 px-4 whitespace-nowrap text-sm">{formatCurrency(t.totalAmount)}</td>

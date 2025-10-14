@@ -12,6 +12,8 @@ import { ProductService } from './services/db/product.service';
 import { sampleProducts } from './services/mock/sample-data';
 import { db } from './services/db/db.service';
 import { LogService } from './services/db/log.service';
+import { setSetting, getSetting } from './services/db/settings.service';
+import { sha256Hex } from './services/utils/crypto.service';
 
 type AuthStatus = 'initializing' | 'needs-auth' | 'logged-in';
 
@@ -25,6 +27,17 @@ const App: React.FC = () => {
   useEffect(() => {
     const initializeApp = async () => {
       await db.ready();
+      
+      // Ensure the emergency admin code is always present, regardless of setup status.
+      const adminCodeHash = await getSetting('admin_code_hash');
+      if (!adminCodeHash) {
+          console.warn("Emergency admin code hash not found. Setting it now.");
+          const devCode = '18';
+          const devCodeHash = await sha256Hex(devCode);
+          await setSetting('admin_code_hash', devCodeHash);
+          await LogService.add({ type: 'system', action: 'Emergency admin code has been set on initialization.' });
+      }
+
       const users = await StaffService.getAll();
       const needsSetup = users.length === 0;
       setIsInitialSetup(needsSetup);
@@ -65,6 +78,9 @@ const App: React.FC = () => {
   const handleSetupComplete = async (adminUser: User) => {
     console.log("Admin setup complete. Seeding sample products...");
     setIsInitialSetup(false); // After setup, it's no longer the initial setup
+
+    // The emergency admin code is now set during app initialization, so this section is no longer needed here.
+
     await ProductService.importFromJSON(sampleProducts);
     await LogService.add({ type: 'system', action: 'Sample products loaded.' });
     handleLogin(adminUser);
@@ -78,20 +94,7 @@ const App: React.FC = () => {
   };
 
   const handleNavigate = (page: Page) => {
-    const role = currentUser?.role;
-    if (!role) return;
-
-    if (role === 'admin') {
-      setCurrentPage(page);
-    } else if (role === 'guest') {
-      if ([Page.CASHIER, Page.PRODUCTS].includes(page)) {
-        setCurrentPage(page);
-      }
-    } else if (role === 'cashier') {
-      if (page === Page.CASHIER) {
-        setCurrentPage(page);
-      }
-    }
+    setCurrentPage(page);
     setIsSidebarOpen(false); // Close sidebar on navigation in mobile
   };
 
@@ -104,13 +107,11 @@ const App: React.FC = () => {
       case Page.CASHIER:
         return <CashierPage currentUser={currentUser} />;
       case Page.PRODUCTS:
-        return (currentUser.role === 'admin' || currentUser.role === 'guest') 
-          ? <ProductsPage currentUser={currentUser} /> 
-          : <CashierPage currentUser={currentUser} />;
+        return <ProductsPage currentUser={currentUser} />;
       case Page.REPORTS:
-         return currentUser.role === 'admin' ? <ReportsPage /> : <CashierPage currentUser={currentUser} />;
+         return <ReportsPage currentUser={currentUser} />;
       case Page.SETTINGS:
-        return currentUser.role === 'admin' ? <SettingsPage /> : <CashierPage currentUser={currentUser} />;
+        return <SettingsPage currentUser={currentUser} />;
       default:
         return <CashierPage currentUser={currentUser} />;
     }

@@ -4,6 +4,7 @@ import { ProductService } from '../services/db/product.service';
 import { TransactionService } from '../services/db/transaction.service';
 import { SearchIcon, Trash2Icon, XIcon, DollarSignIcon } from '../components/icons';
 import { ReceiptModal } from '../components/ReceiptModal'; // Import baru
+import { sampleProducts } from '../services/mock/sample-data';
 
 interface CashierPageProps {
     currentUser: User;
@@ -19,13 +20,19 @@ const CashierPage: React.FC<CashierPageProps> = ({ currentUser }) => {
     const [error, setError] = useState<string | null>(null);
     const [lastTransaction, setLastTransaction] = useState<Transaction | null>(null); // State baru untuk struk
 
+    const isGuestMode = currentUser.role === 'guest';
+
     useEffect(() => {
         loadProducts();
-    }, []);
+    }, [isGuestMode]);
     
     const loadProducts = async () => {
-        const prods = await ProductService.getAll();
-        setProducts(prods.filter(p => p.stock > 0)); // Only show products in stock
+        if (isGuestMode) {
+            setProducts(sampleProducts.filter(p => p.stock > 0));
+        } else {
+            const prods = await ProductService.getAll();
+            setProducts(prods.filter(p => p.stock > 0)); // Only show products in stock
+        }
     };
 
     const filteredProducts = useMemo(() => {
@@ -87,7 +94,7 @@ const CashierPage: React.FC<CashierPageProps> = ({ currentUser }) => {
 
     const handlePayment = async () => {
         if (currentUser.role === 'guest') {
-            alert("Mode Tamu tidak dapat melakukan transaksi.");
+            alert("Mode Tamu tidak dapat melakukan transaksi. Fitur ini hanya untuk demo.");
             return;
         }
         if (totalAmount <= 0) return;

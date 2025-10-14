@@ -1,20 +1,26 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import { backupData, restoreData, resetAllData } from '../services/db/settings.service';
 import { LogService } from '../services/db/log.service';
-import AdminDashboard from '../components/AdminDashboard'; // Import the centralized component
+import AdminDashboard from '../components/AdminDashboard';
+import { User } from '../types';
 
-const DataManagement: React.FC = () => {
+interface DataManagementProps {
+    isReadOnly: boolean;
+}
+
+const DataManagement: React.FC<DataManagementProps> = ({ isReadOnly }) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     const handleBackup = async () => {
-        if (!window.confirm("Anda akan mengunduh file backup berisi semua data aplikasi. Lanjutkan?")) return;
+        if (isReadOnly || !window.confirm("Anda akan mengunduh file backup berisi semua data aplikasi. Lanjutkan?")) return;
         
         setIsLoading(true);
         try {
             await backupData();
             await LogService.add({ type: 'admin_access', action: 'Data backup performed.' });
+            window.location.reload();
         } catch (err) {
             setError("Gagal membuat backup.");
         } finally {
@@ -23,6 +29,7 @@ const DataManagement: React.FC = () => {
     };
 
     const handleRestoreClick = () => {
+        if (isReadOnly) return;
         fileInputRef.current?.click();
     };
 
@@ -59,7 +66,7 @@ const DataManagement: React.FC = () => {
     };
     
     const handleReset = async () => {
-        if (!window.confirm("PERINGATAN KERAS: Anda akan MENGHAPUS SELURUH DATA (produk, transaksi, staf) secara permanen. Aksi ini tidak dapat dibatalkan. Yakin ingin melanjutkan?")) return;
+        if (isReadOnly || !window.confirm("PERINGATAN KERAS: Anda akan MENGHAPUS SELURUH DATA (produk, transaksi, staf) secara permanen. Aksi ini tidak dapat dibatalkan. Yakin ingin melanjutkan?")) return;
 
         const confirmation = window.prompt('Untuk konfirmasi, ketik "HAPUS DATA" di bawah ini:');
         if (confirmation?.toUpperCase()?.trim() !== 'HAPUS DATA') {
@@ -89,7 +96,7 @@ const DataManagement: React.FC = () => {
                 <div className="p-4 bg-black/20 rounded-lg">
                     <h3 className="font-semibold text-lg">Backup Data</h3>
                     <p className="text-sm text-gray-400 mt-1 mb-4">Simpan semua data (produk, transaksi, dll) ke dalam satu file JSON sebagai cadangan.</p>
-                    <button onClick={handleBackup} disabled={isLoading} className="btn-glow px-4 py-2 rounded-lg text-sm disabled:bg-gray-700/50 disabled:shadow-none disabled:transform-none">
+                    <button onClick={handleBackup} disabled={isLoading || isReadOnly} className="btn-glow px-4 py-2 rounded-lg text-sm disabled:bg-gray-700/50 disabled:shadow-none disabled:transform-none disabled:cursor-not-allowed">
                         {isLoading ? 'Memproses...' : 'Backup Sekarang'}
                     </button>
                 </div>
@@ -97,16 +104,16 @@ const DataManagement: React.FC = () => {
                 <div className="p-4 bg-black/20 rounded-lg">
                     <h3 className="font-semibold text-lg">Restore Data</h3>
                     <p className="text-sm text-gray-400 mt-1 mb-4">Pulihkan data dari file backup JSON. Ini akan menimpa semua data yang ada saat ini.</p>
-                    <button onClick={handleRestoreClick} disabled={isLoading} className="bg-green-600/80 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm disabled:bg-green-900/50 transition-colors">
+                    <button onClick={handleRestoreClick} disabled={isLoading || isReadOnly} className="bg-green-600/80 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm disabled:bg-green-900/50 transition-colors disabled:cursor-not-allowed">
                         {isLoading ? 'Memproses...' : 'Pilih File & Pulihkan'}
                     </button>
-                    <input type="file" ref={fileInputRef} onChange={handleFileChange} accept=".json" className="hidden" />
+                    <input type="file" ref={fileInputRef} onChange={handleFileChange} accept=".json" className="hidden" disabled={isReadOnly} />
                 </div>
 
                 <div className="p-4 border border-red-500/50 bg-red-900/20 rounded-lg">
                     <h3 className="font-semibold text-lg text-red-300">Zona Berbahaya</h3>
                     <p className="text-sm text-red-400 mt-1 mb-4">Hapus semua data aplikasi secara permanen. Aksi ini tidak dapat dibatalkan.</p>
-                    <button onClick={handleReset} disabled={isLoading} className="bg-red-600/80 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm disabled:bg-red-900/50 transition-colors">
+                    <button onClick={handleReset} disabled={isLoading || isReadOnly} className="bg-red-600/80 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm disabled:bg-red-900/50 transition-colors disabled:cursor-not-allowed">
                         {isLoading ? 'Memproses...' : 'Reset Semua Data'}
                     </button>
                 </div>
@@ -115,9 +122,13 @@ const DataManagement: React.FC = () => {
     );
 };
 
+interface SettingsPageProps {
+    currentUser: User;
+}
 
-const SettingsPage: React.FC = () => {
+const SettingsPage: React.FC<SettingsPageProps> = ({ currentUser }) => {
     const [activeTab, setActiveTab] = useState<'data' | 'staff'>('data');
+    const isReadOnly = currentUser.role === 'guest';
 
     const TabButton = ({ tab, label, active }: { tab: 'data' | 'staff', label: string, active: boolean }) => (
         <button
@@ -131,17 +142,24 @@ const SettingsPage: React.FC = () => {
           {label}
         </button>
       );
+    
+    const ReadOnlyBanner = () => (
+        <div className="bg-yellow-900/50 border border-yellow-500 text-yellow-300 px-4 py-3 rounded-lg text-center mb-6" role="alert">
+          <p><span className="font-bold">Mode Tamu (Hanya Lihat):</span> Anda dapat melihat halaman pengaturan, namun tidak dapat melakukan aksi apa pun.</p>
+        </div>
+    );
 
     return (
         <div className="flex flex-col h-full">
             <h1 className="text-3xl font-bold mb-6">Pengaturan</h1>
+            {isReadOnly && <ReadOnlyBanner />}
             <div className="border-b border-[var(--border-color)] mb-6">
                 <TabButton tab="data" label="Manajemen Data" active={activeTab === 'data'} />
                 <TabButton tab="staff" label="Manajemen Staf" active={activeTab === 'staff'} />
             </div>
             <div className="flex-1 overflow-y-auto">
-                {activeTab === 'data' && <DataManagement />}
-                {activeTab === 'staff' && <AdminDashboard />}
+                {activeTab === 'data' && <DataManagement isReadOnly={isReadOnly} />}
+                {activeTab === 'staff' && <AdminDashboard isReadOnly={isReadOnly} />}
             </div>
         </div>
     );

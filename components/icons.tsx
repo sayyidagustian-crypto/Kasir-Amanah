@@ -1,5 +1,3 @@
-
-
 import React from 'react';
 
 export const StoreIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
@@ -151,4 +149,43 @@ export const MenuIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
     <line x1="3" y1="6" x2="21" y2="6"></line>
     <line x1="3" y1="18" x2="21" y2="18"></line>
   </svg>
+);
+
+export const DatabaseZapIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <ellipse cx="12" cy="5" rx="9" ry="3" />
+        <path d="M3 5v14a9 3 0 0 0 9 3 9 3 0 0 0 9-3V5" />
+        <path d="M3 12A9 3 0 0 0 21 12" />
+        <path d="m13 19-3-5 4-4-3-5" />
+    </svg>
+);
+
+export const ClockIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10" />
+        <polyline points="12 6 12 12 16 14" />
+    </svg>
+);
+
+export const CodeXmlIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="m18 16 4-4-4-4" />
+        <path d="m6 8-4 4 4 4" />
+        <path d="m14.5 4-5 16" />
+    </svg>
+);
+
+export const BadgeDollarSignIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3.85 8.62a4 4 0 0 1 4.78-4.78l1.21 1.21a1 1 0 0 0 1.42 0l1.21-1.21a4 4 0 0 1 4.78 4.78l-1.21 1.21a1 1 0 0 0 0 1.42l1.21 1.21a4 4 0 0 1-4.78 4.78l-1.21-1.21a1 1 0 0 0-1.42 0l-1.21 1.21a4 4 0 0 1-4.78-4.78l1.21-1.21a1 1 0 0 0 0-1.42z" />
+        <path d="M12 8v8" />
+        <path d="M15 9.5a2.5 2.5 0 0 0 0 5h-3a2.5 2.5 0 0 1 0-5h3z" />
+    </svg>
+);
+
+export const Layers3dIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.84l8.57 3.9a2 2 0 0 0 1.66 0l8.57-3.9a1 1 0 0 0 0-1.84Z"/>
+        <path d="M22 17.65a1 1 0 0 0 0-1.84l-8.57-3.9a2 2 0 0 0-1.66 0L3.2 15.81a1 1 0 0 0 0 1.84l8.57 3.9a2 2 0 0 0 1.66 0Z"/>
+    </svg>
 );

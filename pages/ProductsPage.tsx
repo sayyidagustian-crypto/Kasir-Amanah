@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Product, User } from '../types';
 import { ProductService } from '../services/db/product.service';
 import { PlusCircleIcon, EditIcon, Trash2Icon, SearchIcon, XIcon } from '../components/icons';
+import { sampleProducts } from '../services/mock/sample-data';
 
 interface ProductsPageProps {
   currentUser: User;
@@ -29,8 +30,12 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ currentUser }) => {
     }, [searchTerm, products]);
 
     const loadProducts = async () => {
-        const data = await ProductService.getAll();
-        setProducts(data.sort((a,b) => a.name.localeCompare(b.name)));
+        if (isReadOnly) {
+            setProducts([...sampleProducts].sort((a,b) => a.name.localeCompare(b.name)));
+        } else {
+            const data = await ProductService.getAll();
+            setProducts(data.sort((a,b) => a.name.localeCompare(b.name)));
+        }
     };
 
     const handleOpenModal = (product: Partial<Product> | null = null) => {

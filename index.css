@@ -27,6 +27,29 @@ body {
   border: 1px solid var(--border-color);
   box-shadow: 0 0 25px rgba(0, 245, 255, 0.05);
 }
+
+@keyframes float {
+  0% { transform: translate(0, 0px) rotateX(10deg) rotateY(-5deg); }
+  50% { transform: translate(0, -8px) rotateX(10deg) rotateY(-5deg); }
+  100% { transform: translate(0, 0px) rotateX(10deg) rotateY(-5deg); }
+}
+
+.holographic-card {
+  background: linear-gradient(135deg, rgba(2, 6, 23, 0.5), rgba(0, 245, 255, 0.1));
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 245, 255, 0.3);
+  box-shadow: 0 0 40px rgba(0, 245, 255, 0.2);
+  transform-style: preserve-3d;
+  transform: perspective(1000px) rotateX(10deg) rotateY(-5deg);
+  animation: float 6s ease-in-out infinite;
+  transition: transform 0.5s ease;
+}
+
+.holographic-card:hover {
+    transform: perspective(1200px) rotateX(0deg) rotateY(0deg);
+}
+
 .btn-glow {
   background: linear-gradient(90deg, #00f5ff, #0077ff);
   box-shadow: 0 0 15px rgba(0, 245, 255, 0.4);
@@ -35,6 +58,26 @@ body {
 .btn-glow:hover {
   transform: translateY(-2px);
   box-shadow: 0 0 25px rgba(0, 245, 255, 0.6);
+}
+
+/* Custom Toggle Switch Styles */
+.toggle-label {
+    transition: background-color 0.2s ease-in-out;
+}
+
+.toggle-checkbox {
+    transition: transform 0.2s ease-in-out;
+    transform: translateX(0);
+}
+
+.toggle-checkbox:checked {
+    transform: translateX(1rem); /* 1rem = w-10 (2.5rem) - w-6 (1.5rem) */
+    border-color: var(--color-accent-cyan);
+}
+
+.toggle-checkbox:checked + .toggle-label {
+    background-color: var(--color-accent-cyan);
+    box-shadow: 0 0 10px var(--color-accent-cyan-glow);
 }
 
 @media print {

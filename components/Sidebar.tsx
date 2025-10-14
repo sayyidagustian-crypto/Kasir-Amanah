@@ -23,8 +23,8 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate, onLogout, cu
   const navItems = [
     { page: Page.CASHIER, label: 'Kasir', icon: ShoppingCart, roles: ['admin', 'cashier', 'guest'] },
     { page: Page.PRODUCTS, label: 'Produk', icon: DatabaseIcon, roles: ['admin', 'guest'] },
-    { page: Page.REPORTS, label: 'Laporan', icon: TrendingUpIcon, roles: ['admin'] },
-    { page: Page.SETTINGS, label: 'Pengaturan', icon: SettingsIcon, roles: ['admin'] },
+    { page: Page.REPORTS, label: 'Laporan', icon: TrendingUpIcon, roles: ['admin', 'guest'] },
+    { page: Page.SETTINGS, label: 'Pengaturan', icon: SettingsIcon, roles: ['admin', 'guest'] },
   ];
   
   const isGuest = currentUser?.role === 'guest';

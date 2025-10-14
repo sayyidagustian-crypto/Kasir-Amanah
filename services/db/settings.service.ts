@@ -21,6 +21,9 @@ export const backupData = async (): Promise<void> => {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+
+  // Simpan tanggal backup terakhir ke settings
+  await setSetting('last_backup_date', new Date().toISOString());
 };
 
 export const restoreData = async (data: any): Promise<void> => {
