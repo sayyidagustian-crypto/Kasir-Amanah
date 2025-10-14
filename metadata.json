@@ -1,0 +1,5 @@
+{
+  "name": "Kasir Amanah",
+  "description": "Kasir Amanah is a modern, offline-first Point of Sale (POS) web application designed for efficiency, transparency, and reliability. All data is stored locally on the user's device, ensuring privacy and functionality without an internet connection.",
+  "requestFramePermissions": []
+}

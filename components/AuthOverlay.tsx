@@ -1,0 +1,275 @@
+import React, { useState, useEffect } from 'react';
+import { User, GUEST_USER_ID } from '../types';
+import { StaffService } from '../services/db/staff.service';
+import { StoreIcon } from './icons';
+
+interface AuthOverlayProps {
+    onLogin: (user: User) => void;
+    onSetupComplete: (adminUser: User) => void;
+    isInitialSetup: boolean;
+}
+
+// Sub-component for Initial Admin Setup
+const SetupForm: React.FC<{ 
+    onSetupComplete: (adminUser: User) => void; 
+    onSwitchToLogin: () => void;
+    onLogin: (user: User) => void; // Ditambahkan untuk mode tamu
+}> = ({ onSetupComplete, onSwitchToLogin, onLogin }) => {
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (password !== confirmPassword) {
+            setError('Password tidak cocok.');
+            return;
+        }
+        if (!name || !email || !password) {
+            setError('Semua field wajib diisi.');
+            return;
+        }
+
+        setIsLoading(true);
+        setError('');
+        try {
+            const adminUser = await StaffService.add({
+                name,
+                email,
+                password,
+                role: 'admin',
+            });
+            onSetupComplete(adminUser);
+        } catch (err: any) {
+            setError(err.message || 'Gagal membuat akun admin.');
+            setIsLoading(false);
+        }
+    };
+    
+    const handleGuestLogin = () => {
+        const guestUser: User = {
+            id: GUEST_USER_ID,
+            name: 'Tamu',
+            role: 'guest',
+            createdAt: new Date().toISOString(),
+        };
+        onLogin(guestUser);
+    };
+
+    const inputClasses = "mt-1 block w-full bg-transparent border border-[var(--border-color)] rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[var(--color-accent-cyan)]";
+
+    return (
+        <div className="w-full max-w-md p-8 space-y-6 glassmorphism rounded-lg shadow-lg">
+            <h2 className="text-2xl font-bold text-center text-white">Setup Toko Baru</h2>
+            <p className="text-center text-sm text-gray-400">
+                Selamat datang! Buat akun admin pertama untuk mulai menggunakan Kasir Amanah.
+            </p>
+            <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                    <label className="block text-sm font-medium text-gray-300">Nama Lengkap</label>
+                    <input type="text" value={name} onChange={e => setName(e.target.value)} required className={inputClasses} />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-300">Email</label>
+                    <input type="email" value={email} onChange={e => setEmail(e.target.value)} required className={inputClasses} />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-300">Password</label>
+                    <input type="password" value={password} onChange={e => setPassword(e.target.value)} required className={inputClasses} />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-300">Konfirmasi Password</label>
+                    <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required className={inputClasses} />
+                </div>
+                {error && <p className="text-sm text-center text-red-400">{error}</p>}
+                <button type="submit" disabled={isLoading} className="w-full btn-glow py-3 font-bold rounded-lg disabled:opacity-50">
+                    {isLoading ? 'Menyimpan...' : 'Buat Akun & Mulai'}
+                </button>
+            </form>
+            <div className="mt-4 text-center text-sm space-y-2">
+                <p className="text-gray-400">
+                    Sudah punya toko?{' '}
+                    <button onClick={onSwitchToLogin} className="font-medium text-[var(--color-accent-cyan)] hover:underline">
+                        Login di sini
+                    </button>
+                </p>
+                <p className="text-gray-400">
+                    atau{' '}
+                    <button onClick={handleGuestLogin} className="font-medium text-[var(--color-accent-cyan)] hover:underline">
+                        Coba sebagai Tamu
+                    </button>
+                </p>
+            </div>
+        </div>
+    );
+};
+
+
+// Sub-component for Login
+const LoginForm: React.FC<{ onLogin: (user: User) => void, onSwitchToSetup: () => void }> = ({ onLogin, onSwitchToSetup }) => {
+    const [pin, setPin] = useState('');
+    const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [showAdminLogin, setShowAdminLogin] = useState(false);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    useEffect(() => {
+        if(pin.length === 4) {
+            handlePinLogin();
+        }
+    }, [pin]);
+
+
+    const handlePinInput = (digit: string) => {
+        setError('');
+        if (pin.length < 4) {
+            setPin(pin + digit);
+        }
+    };
+
+    const handleBackspace = () => {
+        setError('');
+        setPin(pin.slice(0, -1));
+    };
+
+    const handlePinLogin = async () => {
+        if (pin.length !== 4) return;
+        setIsLoading(true);
+        setError('');
+        const user = await StaffService.loginWithPin(pin);
+        if (user) {
+            onLogin(user);
+        } else {
+            setError('PIN tidak valid.');
+            setTimeout(() => setPin(''), 500); // Clear PIN after a short delay
+            setIsLoading(false);
+        }
+    };
+    
+    const handleAdminLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsLoading(true);
+        setError('');
+        const admin = await StaffService.verifyAdminCredentials(email, password);
+        if (admin) {
+            onLogin(admin);
+        } else {
+            setError('Email atau password admin salah.');
+            setIsLoading(false);
+        }
+    };
+
+    const handleGuestLogin = () => {
+        const guestUser: User = {
+            id: GUEST_USER_ID,
+            name: 'Tamu',
+            role: 'guest',
+            createdAt: new Date().toISOString(),
+        };
+        onLogin(guestUser);
+    };
+
+    const inputClasses = "mt-1 block w-full bg-transparent border border-[var(--border-color)] rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[var(--color-accent-cyan)]";
+    const pinButtonClasses = "text-2xl font-bold p-4 h-20 w-20 flex items-center justify-center rounded-full bg-gray-700/50 hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500";
+    
+    if (showAdminLogin) {
+        return (
+             <div className="w-full max-w-sm p-8 space-y-6 glassmorphism rounded-lg shadow-lg">
+                <h2 className="text-2xl font-bold text-center text-white">Login Admin</h2>
+                <form onSubmit={handleAdminLogin} className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-300">Email</label>
+                        <input type="email" value={email} onChange={e => setEmail(e.target.value)} required className={inputClasses} />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-300">Password</label>
+                        <input type="password" value={password} onChange={e => setPassword(e.target.value)} required className={inputClasses} />
+                    </div>
+                    {error && <p className="text-sm text-center text-red-400">{error}</p>}
+                    <button type="submit" disabled={isLoading} className="w-full btn-glow py-2.5 font-bold rounded-lg disabled:opacity-50">
+                        {isLoading ? 'Memverifikasi...' : 'Login'}
+                    </button>
+                    <button type="button" onClick={() => setShowAdminLogin(false)} className="w-full text-center text-sm text-gray-400 hover:text-white mt-2">
+                        Kembali ke Login PIN
+                    </button>
+                </form>
+            </div>
+        )
+    }
+
+    return (
+        <div className="w-full max-w-sm text-center">
+             <div className="flex flex-col items-center p-8 space-y-6 glassmorphism rounded-lg shadow-lg">
+                <h2 className="text-2xl font-bold text-white">Login</h2>
+                <div className="flex items-center justify-center space-x-3 h-12">
+                    {Array(4).fill(0).map((_, i) => (
+                        <div key={i} className={`w-6 h-6 rounded-full transition-colors duration-200 ${pin.length > i ? 'bg-[var(--color-accent-cyan)]' : 'bg-gray-600'}`}></div>
+                    ))}
+                </div>
+                <div className="h-5">
+                    {error && <p className="text-sm text-red-400">{error}</p>}
+                </div>
+                
+                <div className="grid grid-cols-3 gap-4">
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map(d => (
+                        <button key={d} onClick={() => handlePinInput(d.toString())} className={pinButtonClasses}>{d}</button>
+                    ))}
+                    <button onClick={handleBackspace} className={`${pinButtonClasses} col-start-3 text-lg`}>⌫</button>
+                </div>
+            </div>
+            <div className="mt-4 flex flex-col space-y-2">
+                <button onClick={() => setShowAdminLogin(true)} className="text-sm text-gray-400 hover:text-white">
+                    Login sebagai Admin
+                </button>
+                 <button onClick={handleGuestLogin} className="text-sm text-gray-400 hover:text-white">
+                    Masuk sebagai Tamu (Mode Coba)
+                </button>
+                <button onClick={onSwitchToSetup} className="text-sm text-gray-400 hover:text-white">
+                    Belum punya toko? <span className="text-[var(--color-accent-cyan)]">Buat Baru</span>
+                </button>
+            </div>
+        </div>
+    );
+};
+
+
+const AuthOverlay: React.FC<AuthOverlayProps> = ({ onLogin, onSetupComplete, isInitialSetup }) => {
+    const [view, setView] = useState<'login' | 'setup'>(isInitialSetup ? 'setup' : 'login');
+
+    // Jika app memutuskan ini adalah setup awal, tapi pengguna ingin login, kita hormati.
+    useEffect(() => {
+        if (isInitialSetup) {
+            setView('setup');
+        } else {
+            setView('login');
+        }
+    }, [isInitialSetup]);
+
+    return (
+        <div className="fixed inset-0 bg-gray-900 flex flex-col items-center justify-center p-4 text-white transition-opacity duration-300">
+            <div className="flex items-center mb-8">
+                 <StoreIcon className="w-10 h-10 text-[var(--color-accent-cyan)]" />
+                 <span className="ml-3 text-3xl font-bold">Kasir Amanah</span>
+            </div>
+
+            {view === 'setup' ? (
+                <SetupForm 
+                    onSetupComplete={onSetupComplete} 
+                    onSwitchToLogin={() => setView('login')}
+                    onLogin={onLogin} 
+                />
+            ) : (
+                <LoginForm 
+                    onLogin={onLogin} 
+                    onSwitchToSetup={() => setView('setup')} 
+                />
+            )}
+        </div>
+    );
+};
+
+export default AuthOverlay;
