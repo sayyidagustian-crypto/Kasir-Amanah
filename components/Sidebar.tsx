@@ -7,8 +7,9 @@ import {
   SettingsIcon,
   StoreIcon,
   LogOutIcon,
-  XIcon, // Import close icon for mobile
+  XIcon,
 } from './icons';
+import Clock from './Clock';
 
 interface SidebarProps {
   currentPage: Page;
@@ -84,6 +85,9 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate, onLogout, cu
           ))}
         </nav>
         <div className="p-4 border-t border-[var(--border-color)]">
+          <div className="hidden md:block mb-4">
+            <Clock />
+          </div>
           <div className='mb-4 p-3 rounded-lg bg-black bg-opacity-20'>
               <p className="text-sm font-semibold text-white">{currentUser?.name}</p>
               <p className="text-xs text-[var(--color-text-secondary)] capitalize">
@@ -104,3 +108,15 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate, onLogout, cu
 };
 
 export default Sidebar;
+
+/**
+ * -----------------------------------------------------------
+ * All praise and thanks are due to Allah.
+ *
+ * Powered by Google, Gemini, and AI Studio.
+ * Development assisted by OpenAI technologies.
+ *
+ * © 2025 SAT18 Official
+ * For suggestions & contact: sayyidagustian@gmail.com
+ * -----------------------------------------------------------
+ */

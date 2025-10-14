@@ -47,3 +47,15 @@ export const setSetting = async (key: string, value: any): Promise<void> => {
     const setting: Setting = { key, value };
     await db.update('settings', setting); // Using update/put is safer as it works for both add and update
 };
+
+/**
+ * -----------------------------------------------------------
+ * All praise and thanks are due to Allah.
+ *
+ * Powered by Google, Gemini, and AI Studio.
+ * Development assisted by OpenAI technologies.
+ *
+ * © 2025 SAT18 Official
+ * For suggestions & contact: sayyidagustian@gmail.com
+ * -----------------------------------------------------------
+ */

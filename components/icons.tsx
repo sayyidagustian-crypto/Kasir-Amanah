@@ -189,3 +189,15 @@ export const Layers3dIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => 
         <path d="M22 17.65a1 1 0 0 0 0-1.84l-8.57-3.9a2 2 0 0 0-1.66 0L3.2 15.81a1 1 0 0 0 0 1.84l8.57 3.9a2 2 0 0 0 1.66 0Z"/>
     </svg>
 );
+
+/**
+ * -----------------------------------------------------------
+ * All praise and thanks are due to Allah.
+ *
+ * Powered by Google, Gemini, and AI Studio.
+ * Development assisted by OpenAI technologies.
+ *
+ * © 2025 SAT18 Official
+ * For suggestions & contact: sayyidagustian@gmail.com
+ * -----------------------------------------------------------
+ */

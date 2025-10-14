@@ -7,3 +7,15 @@ export const sampleProducts: Product[] = [
   { id: 'P-SAMPLE-4', name: 'Donat Gula Halus', category: 'Kue', priceBuy: 3000, priceSell: 8000, stock: 40, unit: 'pcs', createdAt: new Date().toISOString() },
   { id: 'P-SAMPLE-5', name: 'Air Mineral Botol', category: 'Minuman', priceBuy: 2000, priceSell: 5000, stock: 80, unit: 'btl', createdAt: new Date().toISOString() },
 ];
+
+/**
+ * -----------------------------------------------------------
+ * All praise and thanks are due to Allah.
+ *
+ * Powered by Google, Gemini, and AI Studio.
+ * Development assisted by OpenAI technologies.
+ *
+ * © 2025 SAT18 Official
+ * For suggestions & contact: sayyidagustian@gmail.com
+ * -----------------------------------------------------------
+ */

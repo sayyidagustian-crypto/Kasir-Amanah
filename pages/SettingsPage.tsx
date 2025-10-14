@@ -3,6 +3,7 @@ import { backupData, restoreData, resetAllData } from '../services/db/settings.s
 import { LogService } from '../services/db/log.service';
 import AdminDashboard from '../components/AdminDashboard';
 import { User } from '../types';
+import AboutPage from './AboutPage';
 
 interface DataManagementProps {
     isReadOnly: boolean;
@@ -127,13 +128,13 @@ interface SettingsPageProps {
 }
 
 const SettingsPage: React.FC<SettingsPageProps> = ({ currentUser }) => {
-    const [activeTab, setActiveTab] = useState<'data' | 'staff'>('data');
+    const [activeTab, setActiveTab] = useState<'data' | 'staff' | 'about'>('data');
     const isReadOnly = currentUser.role === 'guest';
 
-    const TabButton = ({ tab, label, active }: { tab: 'data' | 'staff', label: string, active: boolean }) => (
+    const TabButton = ({ tab, label, active }: { tab: 'data' | 'staff' | 'about', label: string, active: boolean }) => (
         <button
           onClick={() => setActiveTab(tab)}
-          className={`px-6 py-3 text-sm font-bold transition-all duration-300 border-b-2 ${
+          className={`flex-1 text-center whitespace-nowrap px-2 sm:px-4 py-3 text-xs sm:text-sm font-bold transition-all duration-300 border-b-2 ${
             active 
               ? 'border-[var(--color-accent-cyan)] text-[var(--color-accent-cyan)]' 
               : 'border-transparent text-gray-400 hover:text-white'
@@ -153,16 +154,30 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ currentUser }) => {
         <div className="flex flex-col h-full">
             <h1 className="text-3xl font-bold mb-6">Pengaturan</h1>
             {isReadOnly && <ReadOnlyBanner />}
-            <div className="border-b border-[var(--border-color)] mb-6">
+            <div className="flex border-b border-[var(--border-color)] mb-6">
                 <TabButton tab="data" label="Manajemen Data" active={activeTab === 'data'} />
                 <TabButton tab="staff" label="Manajemen Staf" active={activeTab === 'staff'} />
+                <TabButton tab="about" label="Tentang Aplikasi" active={activeTab === 'about'} />
             </div>
             <div className="flex-1 overflow-y-auto">
                 {activeTab === 'data' && <DataManagement isReadOnly={isReadOnly} />}
                 {activeTab === 'staff' && <AdminDashboard isReadOnly={isReadOnly} />}
+                {activeTab === 'about' && <AboutPage />}
             </div>
         </div>
     );
 };
 
 export default SettingsPage;
+
+/**
+ * -----------------------------------------------------------
+ * All praise and thanks are due to Allah.
+ *
+ * Powered by Google, Gemini, and AI Studio.
+ * Development assisted by OpenAI technologies.
+ *
+ * © 2025 SAT18 Official
+ * For suggestions & contact: sayyidagustian@gmail.com
+ * -----------------------------------------------------------
+ */
