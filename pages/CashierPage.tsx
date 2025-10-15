@@ -148,15 +148,15 @@ const CashierPage: React.FC<CashierPageProps> = ({ currentUser }) => {
                     />
                     <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 </div>
-                <div className="flex-1 overflow-y-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pr-0 lg:pr-2">
+                <div className="flex-1 overflow-y-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 pr-0 lg:pr-2">
                     {filteredProducts.map(product => (
                         <div key={product.id}
                              onClick={() => addToCart(product)}
-                             className="glassmorphism rounded-lg p-3 flex flex-col justify-between cursor-pointer hover:border-[var(--color-accent-cyan)] transition-all duration-200 transform hover:-translate-y-1">
-                            <h3 className="font-semibold text-sm text-white">{product.name}</h3>
-                            <div>
-                               <p className="text-[var(--color-accent-cyan)] font-bold">{formatCurrency(product.priceSell)}</p>
-                               <p className="text-xs text-gray-400">Stok: {product.stock}</p>
+                             className="glassmorphism rounded-lg p-2 flex flex-col justify-between cursor-pointer hover:border-[var(--color-accent-cyan)] transition-all duration-200 transform hover:-translate-y-1 h-24">
+                            <h3 className="font-semibold text-xs text-white leading-tight">{product.name}</h3>
+                            <div className="text-right">
+                               <p className="text-[var(--color-accent-cyan)] font-bold text-sm">{formatCurrency(product.priceSell)}</p>
+                               <p className="text-[11px] text-gray-400">Stok: {product.stock}</p>
                             </div>
                         </div>
                     ))}

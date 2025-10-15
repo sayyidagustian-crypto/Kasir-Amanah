@@ -66,12 +66,12 @@ const SetupForm: React.FC<{
     const inputClasses = "mt-1 block w-full bg-transparent border border-[var(--border-color)] rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[var(--color-accent-cyan)]";
 
     return (
-        <div className="w-full max-w-md p-8 space-y-6 glassmorphism rounded-lg shadow-lg">
+        <div className="w-full max-w-sm p-6 space-y-3 glassmorphism rounded-lg shadow-lg">
             <h2 className="text-2xl font-bold text-center text-white">Setup Toko Baru</h2>
             <p className="text-center text-sm text-gray-400">
                 Selamat datang! Buat akun admin pertama untuk mulai menggunakan Kasir Amanah.
             </p>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-3">
                 <div>
                     <label className="block text-sm font-medium text-gray-300">Nama Lengkap</label>
                     <input type="text" value={name} onChange={e => setName(e.target.value)} required className={inputClasses} />
@@ -178,13 +178,13 @@ const LoginForm: React.FC<{ onLogin: (user: User) => void, onSwitchToSetup: () =
     };
 
     const inputClasses = "mt-1 block w-full bg-transparent border border-[var(--border-color)] rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[var(--color-accent-cyan)]";
-    const pinButtonClasses = "text-2xl font-bold p-4 h-20 w-20 flex items-center justify-center rounded-full bg-gray-700/50 hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500";
+    const pinButtonClasses = "text-2xl font-bold p-4 h-16 w-16 flex items-center justify-center rounded-full bg-gray-700/50 hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500";
     
     if (showAdminLogin) {
         return (
-             <div className="w-full max-w-sm p-8 space-y-6 glassmorphism rounded-lg shadow-lg">
+             <div className="w-full max-w-sm p-6 space-y-4 glassmorphism rounded-lg shadow-lg">
                 <h2 className="text-2xl font-bold text-center text-white">Login Admin</h2>
-                <form onSubmit={handleAdminLogin} className="space-y-4">
+                <form onSubmit={handleAdminLogin} className="space-y-3">
                     <div>
                         <label className="block text-sm font-medium text-gray-300">Email</label>
                         <input type="email" value={email} onChange={e => setEmail(e.target.value)} required className={inputClasses} />
@@ -206,23 +206,25 @@ const LoginForm: React.FC<{ onLogin: (user: User) => void, onSwitchToSetup: () =
     }
 
     return (
-        <div className="w-full max-w-sm text-center">
-             <div className="flex flex-col items-center p-8 space-y-6 glassmorphism rounded-lg shadow-lg">
+        <div className="w-full max-w-xs text-center">
+             <div className="flex flex-col items-center p-6 space-y-4 glassmorphism rounded-lg shadow-lg">
                 <h2 className="text-2xl font-bold text-white">Login</h2>
-                <div className="flex items-center justify-center space-x-3 h-12">
+                <div className="flex items-center justify-center space-x-3 h-10">
                     {Array(4).fill(0).map((_, i) => (
-                        <div key={i} className={`w-6 h-6 rounded-full transition-colors duration-200 ${pin.length > i ? 'bg-[var(--color-accent-cyan)]' : 'bg-gray-600'}`}></div>
+                        <div key={i} className={`w-5 h-5 rounded-full transition-colors duration-200 ${pin.length > i ? 'bg-[var(--color-accent-cyan)]' : 'bg-gray-600'}`}></div>
                     ))}
                 </div>
                 <div className="h-5">
                     {error && <p className="text-sm text-red-400">{error}</p>}
                 </div>
                 
-                <div className="grid grid-cols-3 gap-4">
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map(d => (
+                <div className="grid grid-cols-3 gap-3">
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(d => (
                         <button key={d} onClick={() => handlePinInput(d.toString())} className={pinButtonClasses}>{d}</button>
                     ))}
-                    <button onClick={handleBackspace} className={`${pinButtonClasses} col-start-3 text-lg`}>⌫</button>
+                    <div/>
+                    <button key={0} onClick={() => handlePinInput('0')} className={pinButtonClasses}>0</button>
+                    <button onClick={handleBackspace} className={`${pinButtonClasses} text-lg`}>⌫</button>
                 </div>
             </div>
             <div className="mt-4 flex flex-col space-y-2">
@@ -287,7 +289,7 @@ const AuthOverlay: React.FC<AuthOverlayProps> = ({ onLogin, onSetupComplete, isI
 
     return (
         <div className="fixed inset-0 bg-gray-900 flex flex-col items-center justify-center p-4 text-white transition-opacity duration-300">
-            <div className="flex items-center mb-8">
+            <div className="flex items-center mb-6">
                  <StoreIcon className="w-10 h-10 text-[var(--color-accent-cyan)]" />
                  <span className="ml-3 text-3xl font-bold">Kasir Amanah</span>
             </div>
