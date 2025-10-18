@@ -6,7 +6,7 @@ interface DevCodePromptModalProps {
     onClose: () => void;
 }
 
-const DEV_SECRET_CODE = '18';
+const DEV_SECRET_CODE = '';
 
 const DevCodePromptModal: React.FC<DevCodePromptModalProps> = ({ onSuccess, onClose }) => {
     const [code, setCode] = useState('');
