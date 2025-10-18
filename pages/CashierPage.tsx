@@ -64,16 +64,25 @@ const CashierPage: React.FC<CashierPageProps> = ({ currentUser }) => {
 
     const updateQuantity = (productId: string, quantity: number) => {
         const product = products.find(p => p.id === productId);
+        let finalQuantity = quantity;
+
+        // Clamp value to available stock
         if (product && quantity > product.stock) {
             alert(`Stok ${product.name} hanya tersisa ${product.stock}.`);
-            return;
+            finalQuantity = product.stock;
+        }
+        
+        // Prevent negative numbers. When input is cleared, quantity becomes 0. 
+        // This logic keeps the item in the cart, allowing re-entry of a number.
+        if (finalQuantity < 0) {
+            finalQuantity = 0;
         }
 
-        if (quantity <= 0) {
-            setCart(cart.filter(item => item.productId !== productId));
-        } else {
-            setCart(cart.map(item => item.productId === productId ? { ...item, quantity } : item));
-        }
+        setCart(cart.map(item => 
+            item.productId === productId 
+                ? { ...item, quantity: finalQuantity } 
+                : item
+        ));
     };
 
     const removeFromCart = (productId: string) => {
@@ -97,7 +106,10 @@ const CashierPage: React.FC<CashierPageProps> = ({ currentUser }) => {
             alert("Mode Tamu tidak dapat melakukan transaksi. Fitur ini hanya untuk demo.");
             return;
         }
-        if (totalAmount <= 0) return;
+        if (totalAmount <= 0) {
+            alert("Keranjang kosong atau total belanja nol. Tidak dapat melanjutkan pembayaran.");
+            return;
+        };
         
         setError(null);
         const paid = parseFloat(amountPaid) || 0;
@@ -178,8 +190,10 @@ const CashierPage: React.FC<CashierPageProps> = ({ currentUser }) => {
                                 </div>
                                 <div className="flex items-center">
                                     <input type="number"
-                                           value={item.quantity}
+                                           value={item.quantity === 0 ? '' : item.quantity}
                                            onChange={(e) => updateQuantity(item.productId, parseInt(e.target.value) || 0)}
+                                           onFocus={(e) => e.target.select()}
+                                           placeholder="0"
                                            className="w-16 text-center border rounded-md mx-2 py-1 bg-transparent border-[var(--border-color)]"
                                     />
                                 </div>
