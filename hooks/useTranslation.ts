@@ -11,19 +11,38 @@ export const useTranslation = () => {
 
     /**
      * Translates a key into the current language.
-     * Supports nested keys like 'page.title'.
+     * Supports nested keys like 'page.title' and placeholder replacement.
      * @param key The key to translate.
+     * @param options Optional object with values for placeholders (e.g., { name: 'John' }).
      * @returns The translated string or the key itself if not found.
      */
-    const t = (key: string): string => {
+    // FIX: Updated function to handle a second 'options' argument for placeholder replacement.
+    const t = (key: string, options?: Record<string, string | number>): string => {
         if (!translations) return key;
 
-        return key.split('.').reduce((acc, currentKey) => {
-            if (acc && typeof acc === 'object' && acc[currentKey]) {
+        const translation = key.split('.').reduce((acc, currentKey) => {
+            if (acc && typeof acc === 'object' && acc[currentKey] !== undefined) {
                 return acc[currentKey];
             }
-            return key; // Return the full key as fallback if path is invalid
-        }, translations);
+            return undefined;
+        }, translations as any);
+
+        let template: string;
+        if (typeof translation === 'string') {
+            template = translation;
+        } else {
+            // Fallback to the key itself if not found or not a string
+            template = key;
+        }
+
+        if (options) {
+            return Object.keys(options).reduce((str, placeholder) => {
+                const regex = new RegExp(`{${placeholder}}`, 'g');
+                return str.replace(regex, String(options[placeholder]));
+            }, template);
+        }
+
+        return template;
     };
 
     return { ...context, t };

@@ -136,11 +136,12 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ currentUser }) => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-[var(--border-color)] md:divide-y-0">
-                                {transactions.map(t => (
-                                    <tr key={t.id} onClick={() => !isReadOnly && setSelectedTransaction(t)} className={`hover:bg-white/5 transition-colors ${!isReadOnly && 'cursor-pointer'}`}>
-                                        <td data-label={t('reports.table.time')} className="py-3 px-4 whitespace-nowrap text-sm">{new Date(t.createdAt).toLocaleString('id-ID')}</td>
-                                        <td data-label={t('reports.table.transactionId')} className="py-3 px-4 whitespace-nowrap text-sm font-mono">{t.id}</td>
-                                        <td data-label={t('reports.table.total')} className="py-3 px-4 whitespace-nowrap text-sm">{formatCurrency(t.totalAmount)}</td>
+                                {/* FIX: Renamed map variable from 't' to 'transaction' to avoid shadowing the translation function 't'. */}
+                                {transactions.map(transaction => (
+                                    <tr key={transaction.id} onClick={() => !isReadOnly && setSelectedTransaction(transaction)} className={`hover:bg-white/5 transition-colors ${!isReadOnly && 'cursor-pointer'}`}>
+                                        <td data-label={t('reports.table.time')} className="py-3 px-4 whitespace-nowrap text-sm">{new Date(transaction.createdAt).toLocaleString('id-ID')}</td>
+                                        <td data-label={t('reports.table.transactionId')} className="py-3 px-4 whitespace-nowrap text-sm font-mono">{transaction.id}</td>
+                                        <td data-label={t('reports.table.total')} className="py-3 px-4 whitespace-nowrap text-sm">{formatCurrency(transaction.totalAmount)}</td>
                                     </tr>
                                 ))}
                                 {transactions.length === 0 && (

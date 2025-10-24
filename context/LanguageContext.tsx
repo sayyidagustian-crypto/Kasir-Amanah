@@ -11,7 +11,7 @@ interface LanguageContextType {
 export const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [language, setLanguageState] = useState<Language>('id');
+    const [language, setLanguageState] = useState<Language>('en');
     const [translations, setTranslations] = useState<Record<string, any>>({});
     const [isLoading, setIsLoading] = useState(true);
 
@@ -20,7 +20,7 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
         if (savedLanguage && ['id', 'en', 'zh'].includes(savedLanguage)) {
              setLanguageState(savedLanguage);
         } else {
-             setLanguageState('id'); // Default language
+             setLanguageState('en'); // Default language
         }
     }, []);
 
@@ -36,9 +36,9 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
                 setTranslations(data);
             } catch (error) {
                 console.error('Failed to fetch translations:', error);
-                // Fallback to Indonesian if the selected language fails
-                if (language !== 'id') {
-                    setLanguageState('id');
+                // Fallback to English if the selected language fails
+                if (language !== 'en') {
+                    setLanguageState('en');
                 }
             } finally {
                 setIsLoading(false);
