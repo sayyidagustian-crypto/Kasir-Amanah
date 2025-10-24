@@ -2,6 +2,7 @@ import React from 'react';
 import { MenuIcon } from './icons';
 import { Page } from '../types';
 import Clock from './Clock';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface HeaderProps {
     onToggleSidebar: () => void;
@@ -9,9 +10,11 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ onToggleSidebar, currentPage }) => {
-    // A simple function to make page titles more readable
+    const { t } = useTranslation();
+
     const formatPageTitle = (page: Page) => {
-        return page.charAt(0).toUpperCase() + page.slice(1).toLowerCase();
+        // Use translation key like 'header.CASHIER'
+        return t(`header.${page}`);
     };
 
     return (

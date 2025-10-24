@@ -5,7 +5,9 @@ import { StoreIcon } from './icons';
 import { useSecretSequence } from '../hooks/useSecretSequence';
 import AdminCodeModal from './AdminCodeModal';
 import DevAccessModal from './DevAccessModal';
-import DevCodePromptModal from './DevCodePromptModal'; // Import baru
+import DevCodePromptModal from './DevCodePromptModal';
+import { useTranslation } from '../hooks/useTranslation';
+
 
 interface AuthOverlayProps {
     onLogin: (user: User) => void;
@@ -17,7 +19,7 @@ interface AuthOverlayProps {
 const SetupForm: React.FC<{ 
     onSetupComplete: (adminUser: User) => void; 
     onSwitchToLogin: () => void;
-    onLogin: (user: User) => void; // Ditambahkan untuk mode tamu
+    onLogin: (user: User) => void;
 }> = ({ onSetupComplete, onSwitchToLogin, onLogin }) => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -25,15 +27,16 @@ const SetupForm: React.FC<{
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const { t } = useTranslation();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (password !== confirmPassword) {
-            setError('Password tidak cocok.');
+            setError(t('auth.setup.errorPasswordMismatch'));
             return;
         }
         if (!name || !email || !password) {
-            setError('Semua field wajib diisi.');
+            setError(t('auth.setup.errorAllFieldsRequired'));
             return;
         }
 
@@ -56,7 +59,7 @@ const SetupForm: React.FC<{
     const handleGuestLogin = () => {
         const guestUser: User = {
             id: GUEST_USER_ID,
-            name: 'Tamu',
+            name: t('auth.guest'),
             role: 'guest',
             createdAt: new Date().toISOString(),
         };
@@ -67,43 +70,43 @@ const SetupForm: React.FC<{
 
     return (
         <div className="w-full max-w-sm p-6 space-y-3 glassmorphism rounded-lg shadow-lg">
-            <h2 className="text-2xl font-bold text-center text-white">Setup Toko Baru</h2>
+            <h2 className="text-2xl font-bold text-center text-white">{t('auth.setup.title')}</h2>
             <p className="text-center text-sm text-gray-400">
-                Selamat datang! Buat akun admin pertama untuk mulai menggunakan Kasir Amanah.
+                {t('auth.setup.desc')}
             </p>
             <form onSubmit={handleSubmit} className="space-y-3">
                 <div>
-                    <label className="block text-sm font-medium text-gray-300">Nama Lengkap</label>
+                    <label className="block text-sm font-medium text-gray-300">{t('auth.setup.name')}</label>
                     <input type="text" value={name} onChange={e => setName(e.target.value)} required className={inputClasses} />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-300">Email</label>
+                    <label className="block text-sm font-medium text-gray-300">{t('auth.setup.email')}</label>
                     <input type="email" value={email} onChange={e => setEmail(e.target.value)} required className={inputClasses} />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-300">Password</label>
+                    <label className="block text-sm font-medium text-gray-300">{t('auth.setup.password')}</label>
                     <input type="password" value={password} onChange={e => setPassword(e.target.value)} required className={inputClasses} />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-300">Konfirmasi Password</label>
+                    <label className="block text-sm font-medium text-gray-300">{t('auth.setup.confirmPassword')}</label>
                     <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required className={inputClasses} />
                 </div>
                 {error && <p className="text-sm text-center text-red-400">{error}</p>}
                 <button type="submit" disabled={isLoading} className="w-full btn-glow py-3 font-bold rounded-lg disabled:opacity-50">
-                    {isLoading ? 'Menyimpan...' : 'Buat Akun & Mulai'}
+                    {isLoading ? t('auth.setup.submitting') : t('auth.setup.submitButton')}
                 </button>
             </form>
             <div className="mt-4 text-center text-sm space-y-2">
                 <p className="text-gray-400">
-                    Sudah punya toko?{' '}
+                    {t('auth.setup.haveAccount')}{' '}
                     <button onClick={onSwitchToLogin} className="font-medium text-[var(--color-accent-cyan)] hover:underline">
-                        Login di sini
+                        {t('auth.setup.loginHere')}
                     </button>
                 </p>
                 <p className="text-gray-400">
-                    atau{' '}
+                    {'atau / or / 或'}{' '}
                     <button onClick={handleGuestLogin} className="font-medium text-[var(--color-accent-cyan)] hover:underline">
-                        Coba sebagai Tamu
+                        {t('auth.setup.tryGuest')}
                     </button>
                 </p>
             </div>
@@ -120,6 +123,7 @@ const LoginForm: React.FC<{ onLogin: (user: User) => void, onSwitchToSetup: () =
     const [showAdminLogin, setShowAdminLogin] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const { t } = useTranslation();
 
     useEffect(() => {
         if(pin.length === 4) {
@@ -148,8 +152,8 @@ const LoginForm: React.FC<{ onLogin: (user: User) => void, onSwitchToSetup: () =
         if (user) {
             onLogin(user);
         } else {
-            setError('PIN tidak valid.');
-            setTimeout(() => setPin(''), 500); // Clear PIN after a short delay
+            setError(t('auth.login.invalidPin'));
+            setTimeout(() => setPin(''), 500);
             setIsLoading(false);
         }
     };
@@ -162,7 +166,7 @@ const LoginForm: React.FC<{ onLogin: (user: User) => void, onSwitchToSetup: () =
         if (admin) {
             onLogin(admin);
         } else {
-            setError('Email atau password admin salah.');
+            setError(t('auth.login.adminForm.invalidCredentials'));
             setIsLoading(false);
         }
     };
@@ -170,7 +174,7 @@ const LoginForm: React.FC<{ onLogin: (user: User) => void, onSwitchToSetup: () =
     const handleGuestLogin = () => {
         const guestUser: User = {
             id: GUEST_USER_ID,
-            name: 'Tamu',
+            name: t('auth.guest'),
             role: 'guest',
             createdAt: new Date().toISOString(),
         };
@@ -183,22 +187,22 @@ const LoginForm: React.FC<{ onLogin: (user: User) => void, onSwitchToSetup: () =
     if (showAdminLogin) {
         return (
              <div className="w-full max-w-sm p-6 space-y-4 glassmorphism rounded-lg shadow-lg">
-                <h2 className="text-2xl font-bold text-center text-white">Login Admin</h2>
+                <h2 className="text-2xl font-bold text-center text-white">{t('auth.login.adminForm.title')}</h2>
                 <form onSubmit={handleAdminLogin} className="space-y-3">
                     <div>
-                        <label className="block text-sm font-medium text-gray-300">Email</label>
+                        <label className="block text-sm font-medium text-gray-300">{t('auth.login.adminForm.email')}</label>
                         <input type="email" value={email} onChange={e => setEmail(e.target.value)} required className={inputClasses} />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-300">Password</label>
+                        <label className="block text-sm font-medium text-gray-300">{t('auth.login.adminForm.password')}</label>
                         <input type="password" value={password} onChange={e => setPassword(e.target.value)} required className={inputClasses} />
                     </div>
                     {error && <p className="text-sm text-center text-red-400">{error}</p>}
                     <button type="submit" disabled={isLoading} className="w-full btn-glow py-2.5 font-bold rounded-lg disabled:opacity-50">
-                        {isLoading ? 'Memverifikasi...' : 'Login'}
+                        {isLoading ? t('auth.login.adminForm.submitting') : t('auth.login.adminForm.submitButton')}
                     </button>
                     <button type="button" onClick={() => setShowAdminLogin(false)} className="w-full text-center text-sm text-gray-400 hover:text-white mt-2">
-                        Kembali ke Login PIN
+                        {t('auth.login.adminForm.backToPin')}
                     </button>
                 </form>
             </div>
@@ -208,7 +212,7 @@ const LoginForm: React.FC<{ onLogin: (user: User) => void, onSwitchToSetup: () =
     return (
         <div className="w-full max-w-xs text-center">
              <div className="flex flex-col items-center p-6 space-y-4 glassmorphism rounded-lg shadow-lg">
-                <h2 className="text-2xl font-bold text-white">Login</h2>
+                <h2 className="text-2xl font-bold text-white">{t('auth.login.title')}</h2>
                 <div className="flex items-center justify-center space-x-3 h-10">
                     {Array(4).fill(0).map((_, i) => (
                         <div key={i} className={`w-5 h-5 rounded-full transition-colors duration-200 ${pin.length > i ? 'bg-[var(--color-accent-cyan)]' : 'bg-gray-600'}`}></div>
@@ -229,13 +233,14 @@ const LoginForm: React.FC<{ onLogin: (user: User) => void, onSwitchToSetup: () =
             </div>
             <div className="mt-4 flex flex-col space-y-2">
                 <button onClick={() => setShowAdminLogin(true)} className="text-sm text-gray-400 hover:text-white">
-                    Login sebagai Admin
+                    {t('auth.login.adminLogin')}
                 </button>
                  <button onClick={handleGuestLogin} className="text-sm text-gray-400 hover:text-white">
-                    Masuk sebagai Tamu (Mode Coba)
+                    {t('auth.login.guestLogin')}
                 </button>
                 <button onClick={onSwitchToSetup} className="text-sm text-gray-400 hover:text-white">
-                    Belum punya toko? <span className="text-[var(--color-accent-cyan)]">Buat Baru</span>
+                    {t('auth.login.noAccount')}{' '}
+                    <span className="text-[var(--color-accent-cyan)]">{t('auth.login.createHere')}</span>
                 </button>
             </div>
         </div>
@@ -248,7 +253,7 @@ const AuthOverlay: React.FC<AuthOverlayProps> = ({ onLogin, onSetupComplete, isI
     const [isAdminCodeModalOpen, setIsAdminCodeModalOpen] = useState(false);
     const [isDevAccessModalOpen, setIsDevAccessModalOpen] = useState(false);
     const [isDevCodePromptOpen, setIsDevCodePromptOpen] = useState(false);
-
+    const { t } = useTranslation();
 
     useEffect(() => {
         if (isInitialSetup) {
@@ -257,15 +262,12 @@ const AuthOverlay: React.FC<AuthOverlayProps> = ({ onLogin, onSetupComplete, isI
             setView('login');
         }
     }, [isInitialSetup]);
-
-    // Emergency Admin Login (Original SSAATT trigger is now for Dev Access)
-    // For legacy emergency admin access, let's use a different code, e.g., 'ADMIN18'
+    
      useSecretSequence('ADMIN18', () => {
         console.log("Kombinasi rahasia Admin Darurat terdeteksi!");
         setIsAdminCodeModalOpen(true);
     });
     
-    // New Developer Access Flow
     useSecretSequence('SSAATT', () => {
         console.log("Kombinasi rahasia Developer Access terdeteksi!");
         setIsDevCodePromptOpen(true);
@@ -291,7 +293,7 @@ const AuthOverlay: React.FC<AuthOverlayProps> = ({ onLogin, onSetupComplete, isI
         <div className="fixed inset-0 bg-gray-900 flex flex-col items-center justify-center p-4 text-white transition-opacity duration-300">
             <div className="flex items-center mb-6">
                  <StoreIcon className="w-10 h-10 text-[var(--color-accent-cyan)]" />
-                 <span className="ml-3 text-3xl font-bold">Kasir Amanah</span>
+                 <span className="ml-3 text-3xl font-bold">{t('sidebar.title')}</span>
             </div>
 
             {view === 'setup' ? (

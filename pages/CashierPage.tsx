@@ -3,8 +3,9 @@ import { Product, Transaction, TransactionItem, User } from '../types';
 import { ProductService } from '../services/db/product.service';
 import { TransactionService } from '../services/db/transaction.service';
 import { SearchIcon, Trash2Icon, XIcon, DollarSignIcon } from '../components/icons';
-import { ReceiptModal } from '../components/ReceiptModal'; // Import baru
+import { ReceiptModal } from '../components/ReceiptModal';
 import { sampleProducts } from '../services/mock/sample-data';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface CashierPageProps {
     currentUser: User;
@@ -18,7 +19,8 @@ const CashierPage: React.FC<CashierPageProps> = ({ currentUser }) => {
     const [amountPaid, setAmountPaid] = useState('');
     const [paymentMethod, setPaymentMethod] = useState<'cash' | 'card' | 'qris'>('cash');
     const [error, setError] = useState<string | null>(null);
-    const [lastTransaction, setLastTransaction] = useState<Transaction | null>(null); // State baru untuk struk
+    const [lastTransaction, setLastTransaction] = useState<Transaction | null>(null);
+    const { t } = useTranslation();
 
     const isGuestMode = currentUser.role === 'guest';
 
@@ -31,7 +33,7 @@ const CashierPage: React.FC<CashierPageProps> = ({ currentUser }) => {
             setProducts(sampleProducts.filter(p => p.stock > 0));
         } else {
             const prods = await ProductService.getAll();
-            setProducts(prods.filter(p => p.stock > 0)); // Only show products in stock
+            setProducts(prods.filter(p => p.stock > 0));
         }
     };
 
@@ -45,7 +47,7 @@ const CashierPage: React.FC<CashierPageProps> = ({ currentUser }) => {
             if(product.stock > existingItem.quantity) {
                 setCart(cart.map(item => item.productId === product.id ? { ...item, quantity: item.quantity + 1 } : item));
             } else {
-                alert(`Stok ${product.name} tidak mencukupi.`);
+                alert(t('cashier.alerts.stockNotEnough').replace('{productName}', product.name));
             }
         } else {
              if(product.stock > 0) {
@@ -57,7 +59,7 @@ const CashierPage: React.FC<CashierPageProps> = ({ currentUser }) => {
                     costPrice: product.priceBuy
                 }]);
             } else {
-                 alert(`Stok ${product.name} habis.`);
+                 alert(t('cashier.alerts.stockEmpty').replace('{productName}', product.name));
             }
         }
     };
@@ -66,14 +68,11 @@ const CashierPage: React.FC<CashierPageProps> = ({ currentUser }) => {
         const product = products.find(p => p.id === productId);
         let finalQuantity = quantity;
 
-        // Clamp value to available stock
         if (product && quantity > product.stock) {
-            alert(`Stok ${product.name} hanya tersisa ${product.stock}.`);
+            alert(t('cashier.alerts.stockOnly').replace('{productName}', product.name).replace('{stock}', product.stock.toString()));
             finalQuantity = product.stock;
         }
         
-        // Prevent negative numbers. When input is cleared, quantity becomes 0. 
-        // This logic keeps the item in the cart, allowing re-entry of a number.
         if (finalQuantity < 0) {
             finalQuantity = 0;
         }
@@ -103,11 +102,11 @@ const CashierPage: React.FC<CashierPageProps> = ({ currentUser }) => {
 
     const handlePayment = async () => {
         if (currentUser.role === 'guest') {
-            alert("Mode Tamu tidak dapat melakukan transaksi. Fitur ini hanya untuk demo.");
+            alert(t('cashier.alerts.guestTransactionError'));
             return;
         }
         if (totalAmount <= 0) {
-            alert("Keranjang kosong atau total belanja nol. Tidak dapat melanjutkan pembayaran.");
+            alert(t('cashier.alerts.emptyCartError'));
             return;
         };
         
@@ -115,7 +114,7 @@ const CashierPage: React.FC<CashierPageProps> = ({ currentUser }) => {
         const paid = parseFloat(amountPaid) || 0;
 
         if (paymentMethod === 'cash' && (isNaN(paid) || paid < totalAmount)) {
-            setError('Jumlah pembayaran tunai tidak valid atau kurang.');
+            setError(t('cashier.paymentModal.insufficientPayment'));
             return;
         }
 
@@ -130,15 +129,13 @@ const CashierPage: React.FC<CashierPageProps> = ({ currentUser }) => {
                 amountPaid: finalAmountPaid,
             }, { id: currentUser.id, name: currentUser.name });
             
-            // Logika baru: tampilkan struk, jangan alert
             setLastTransaction(completedTransaction);
-
             clearCart();
             setAmountPaid('');
             setIsPaymentModalOpen(false);
-            loadProducts(); // Reload products to update stock
+            loadProducts();
         } catch (err: any) {
-            setError(err.message || 'Gagal menyimpan transaksi.');
+            setError(err.message || t('cashier.alerts.transactionFailed'));
         }
     };
 
@@ -153,7 +150,7 @@ const CashierPage: React.FC<CashierPageProps> = ({ currentUser }) => {
                 <div className="relative mb-4">
                     <input
                         type="text"
-                        placeholder="Cari produk..."
+                        placeholder={t('cashier.searchPlaceholder')}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="w-full pl-10 pr-4 py-3 bg-[var(--color-bg-secondary)] border border-[var(--border-color)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-accent-cyan)] text-white"
@@ -168,7 +165,7 @@ const CashierPage: React.FC<CashierPageProps> = ({ currentUser }) => {
                             <h3 className="font-semibold text-xs text-white leading-tight">{product.name}</h3>
                             <div className="text-right">
                                <p className="text-[var(--color-accent-cyan)] font-bold text-sm">{formatCurrency(product.priceSell)}</p>
-                               <p className="text-[11px] text-gray-400">Stok: {product.stock}</p>
+                               <p className="text-[11px] text-gray-400">{t('cashier.productCard.stock').replace('{stock}', product.stock.toString())}</p>
                             </div>
                         </div>
                     ))}
@@ -177,10 +174,10 @@ const CashierPage: React.FC<CashierPageProps> = ({ currentUser }) => {
 
             {/* Cart */}
             <div className="w-full lg:w-2/5 p-4 glassmorphism rounded-lg flex flex-col h-full max-h-[50vh] lg:max-h-full">
-                <h2 className="text-xl font-bold mb-4 border-b border-[var(--border-color)] pb-2">Keranjang</h2>
+                <h2 className="text-xl font-bold mb-4 border-b border-[var(--border-color)] pb-2">{t('cashier.cartTitle')}</h2>
                 <div className="flex-1 overflow-y-auto pr-2">
                     {cart.length === 0 ? (
-                        <p className="text-gray-500 text-center mt-8">Keranjang kosong</p>
+                        <p className="text-gray-500 text-center mt-8">{t('cashier.cartEmpty')}</p>
                     ) : (
                         cart.map(item => (
                             <div key={item.productId} className="flex items-center mb-3 p-2 rounded-md hover:bg-black/20">
@@ -206,15 +203,15 @@ const CashierPage: React.FC<CashierPageProps> = ({ currentUser }) => {
                 </div>
                 <div className="border-t border-[var(--border-color)] pt-4">
                     <div className="flex justify-between items-center font-bold text-lg mb-4">
-                        <span>Total</span>
+                        <span>{t('cashier.total')}</span>
                         <span className="text-[var(--color-accent-cyan)]">{formatCurrency(totalAmount)}</span>
                     </div>
                     <div className="grid grid-cols-2 gap-2">
                         <button onClick={clearCart} disabled={cart.length === 0} className="w-full bg-red-600/80 text-white py-3 rounded-lg hover:bg-red-600 disabled:bg-red-900/50 transition-colors">
-                            Batal
+                            {t('cashier.cancel')}
                         </button>
                         <button onClick={() => setIsPaymentModalOpen(true)} disabled={cart.length === 0} className="w-full bg-green-500/80 text-white py-3 rounded-lg hover:bg-green-500 disabled:bg-green-900/50 font-bold transition-colors">
-                            Bayar
+                            {t('cashier.pay')}
                         </button>
                     </div>
                 </div>
@@ -225,27 +222,27 @@ const CashierPage: React.FC<CashierPageProps> = ({ currentUser }) => {
                  <div className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
                     <div className="glassmorphism p-6 rounded-lg shadow-xl w-full max-w-md border border-[var(--color-accent-cyan)] shadow-[0_0_20px_var(--color-accent-cyan-glow)]">
                         <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-xl font-bold">Pembayaran</h3>
+                            <h3 className="text-xl font-bold">{t('cashier.paymentModal.title')}</h3>
                             <button onClick={() => setIsPaymentModalOpen(false)}><XIcon className="w-6 h-6"/></button>
                         </div>
                         
                         <div className="mb-4 p-4 bg-black/20 rounded-lg text-center">
-                            <p className="text-gray-400">Total Tagihan</p>
+                            <p className="text-gray-400">{t('cashier.paymentModal.totalBill')}</p>
                             <p className="text-3xl font-bold text-[var(--color-accent-cyan)]">{formatCurrency(totalAmount)}</p>
                         </div>
 
                         <div className="mb-4">
-                            <label className="block text-sm font-medium text-gray-300 mb-2">Metode Pembayaran</label>
+                            <label className="block text-sm font-medium text-gray-300 mb-2">{t('cashier.paymentModal.paymentMethod')}</label>
                             <select value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value as any)} className="w-full p-2 border rounded-md bg-[var(--color-bg-secondary)] border-[var(--border-color)]">
-                                <option value="cash">Tunai</option>
-                                <option value="card">Kartu</option>
-                                <option value="qris">QRIS</option>
+                                <option value="cash">{t('cashier.paymentModal.cash')}</option>
+                                <option value="card">{t('cashier.paymentModal.card')}</option>
+                                <option value="qris">{t('cashier.paymentModal.qris')}</option>
                             </select>
                         </div>
 
                         {paymentMethod === 'cash' ? (
                              <div className="mb-4">
-                                <label htmlFor="amountPaid" className="block text-sm font-medium text-gray-300">Jumlah Dibayar</label>
+                                <label htmlFor="amountPaid" className="block text-sm font-medium text-gray-300">{t('cashier.paymentModal.amountPaid')}</label>
                                 <div className="mt-1 relative rounded-md shadow-sm">
                                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                         <span className="text-gray-400 sm:text-sm">Rp</span>
@@ -256,22 +253,21 @@ const CashierPage: React.FC<CashierPageProps> = ({ currentUser }) => {
                                 </div>
                                 {parseFloat(amountPaid) >= totalAmount && (
                                     <p className="text-sm text-gray-400 mt-2">
-                                        Kembalian: {formatCurrency(Math.max(0, parseFloat(amountPaid) - totalAmount))}
+                                        {t('cashier.paymentModal.change', { amount: formatCurrency(Math.max(0, parseFloat(amountPaid) - totalAmount)) })}
                                     </p>
                                 )}
                              </div>
-                        ) : <div className='mb-4 text-center text-sm p-2 bg-black/20 rounded-md'>Pembayaran dianggap pas.</div>}
+                        ) : <div className='mb-4 text-center text-sm p-2 bg-black/20 rounded-md'>{t('cashier.paymentModal.passivePaymentMessage')}</div>}
                         
                         {error && <p className="text-red-400 text-sm mb-4">{error}</p>}
                         
                         <button onClick={handlePayment} className="w-full btn-glow text-white py-3 rounded-lg font-bold flex items-center justify-center">
-                           <DollarSignIcon className="w-5 h-5 mr-2" /> Konfirmasi Pembayaran
+                           <DollarSignIcon className="w-5 h-5 mr-2" /> {t('cashier.paymentModal.confirmPayment')}
                         </button>
                     </div>
                 </div>
             )}
 
-            {/* Receipt Modal */}
             {lastTransaction && (
                 <ReceiptModal transaction={lastTransaction} onClose={() => setLastTransaction(null)} />
             )}

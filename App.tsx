@@ -14,6 +14,7 @@ import { db } from './services/db/db.service';
 import { LogService } from './services/db/log.service';
 import { setSetting, getSetting } from './services/db/settings.service';
 import { sha256Hex } from './services/utils/crypto.service';
+import { useTranslation } from './hooks/useTranslation';
 
 type AuthStatus = 'initializing' | 'needs-auth' | 'logged-in';
 
@@ -23,12 +24,12 @@ const App: React.FC = () => {
   const [authStatus, setAuthStatus] = useState<AuthStatus>('initializing');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isInitialSetup, setIsInitialSetup] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const initializeApp = async () => {
       await db.ready();
       
-      // Ensure the emergency admin code is always present, regardless of setup status.
       const adminCodeHash = await getSetting('admin_code_hash');
       if (!adminCodeHash) {
           console.warn("Emergency admin code hash not found. Setting it now.");
@@ -77,9 +78,7 @@ const App: React.FC = () => {
 
   const handleSetupComplete = async (adminUser: User) => {
     console.log("Admin setup complete. Seeding sample products...");
-    setIsInitialSetup(false); // After setup, it's no longer the initial setup
-
-    // The emergency admin code is now set during app initialization, so this section is no longer needed here.
+    setIsInitialSetup(false);
 
     await ProductService.importFromJSON(sampleProducts);
     await LogService.add({ type: 'system', action: 'Sample products loaded.' });
@@ -95,12 +94,12 @@ const App: React.FC = () => {
 
   const handleNavigate = (page: Page) => {
     setCurrentPage(page);
-    setIsSidebarOpen(false); // Close sidebar on navigation in mobile
+    setIsSidebarOpen(false);
   };
 
   const renderPage = () => {
     if (!currentUser) {
-        return <div className="flex h-full w-full items-center justify-center">Memuat halaman...</div>;
+        return <div className="flex h-full w-full items-center justify-center">{t('app.loadingPage')}</div>;
     }
 
     switch (currentPage) {
@@ -120,7 +119,7 @@ const App: React.FC = () => {
   const renderContent = () => {
     switch(authStatus) {
         case 'initializing':
-            return <div className="flex h-screen w-full items-center justify-center bg-gray-900 text-white">Memuat aplikasi...</div>;
+            return <div className="flex h-screen w-full items-center justify-center bg-gray-900 text-white">{t('app.loadingApp')}</div>;
         case 'needs-auth':
             return <AuthOverlay 
                         onLogin={handleLogin} 
@@ -128,7 +127,7 @@ const App: React.FC = () => {
                         isInitialSetup={isInitialSetup} 
                    />;
         case 'logged-in':
-            if (!currentUser) return <div className="flex h-screen w-full items-center justify-center bg-gray-900 text-white">Error: Pengguna tidak ditemukan.</div>;
+            if (!currentUser) return <div className="flex h-screen w-full items-center justify-center bg-gray-900 text-white">{t('app.userError')}</div>;
             return (
                 <div className="flex h-screen font-sans text-white bg-gray-900/50">
                     <Sidebar
@@ -151,7 +150,7 @@ const App: React.FC = () => {
                 </div>
             );
         default:
-             return <div className="flex h-screen w-full items-center justify-center bg-gray-900 text-white">Status aplikasi tidak valid.</div>;
+             return <div className="flex h-screen w-full items-center justify-center bg-gray-900 text-white">{t('app.invalidStatus')}</div>;
     }
   }
 

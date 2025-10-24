@@ -1,6 +1,7 @@
 import React from 'react';
 import { Transaction } from '../types';
 import { XIcon, PrinterIcon, ShareIcon } from './icons';
+import { useTranslation } from '../hooks/useTranslation';
 
 const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount);
@@ -8,15 +9,16 @@ const formatCurrency = (amount: number) => {
 
 // Internal Receipt Component (for modal and printing)
 const Receipt: React.FC<{ transaction: Transaction }> = ({ transaction }) => {
+    const { t } = useTranslation();
     return (
         <div className="text-sm">
             <div className="text-center mb-4">
-                <h2 className="text-xl font-bold">Struk Kasir Amanah</h2>
+                <h2 className="text-xl font-bold">{t('receipt.title')}</h2>
                 <p className="text-xs">{new Date(transaction.createdAt).toLocaleString('id-ID')}</p>
             </div>
             <div className="mb-2">
-                <p>ID: <span className="font-mono">{transaction.id}</span></p>
-                <p>Kasir: {transaction.cashierName}</p>
+                <p>{t('receipt.receiptId')}<span className="font-mono">{transaction.id}</span></p>
+                <p>{t('receipt.cashier')}{transaction.cashierName}</p>
             </div>
             <hr className="my-2 border-dashed border-gray-500" />
             <table className="w-full">
@@ -35,12 +37,12 @@ const Receipt: React.FC<{ transaction: Transaction }> = ({ transaction }) => {
             </table>
             <hr className="my-2 border-dashed border-gray-500" />
             <div className="space-y-1">
-                <div className="flex justify-between"><span>Subtotal</span><span>{formatCurrency(transaction.totalAmount)}</span></div>
-                <div className="flex justify-between font-bold"><span>TOTAL</span><span>{formatCurrency(transaction.totalAmount)}</span></div>
-                <div className="flex justify-between"><span>Bayar ({transaction.paymentMethod})</span><span>{formatCurrency(transaction.amountPaid)}</span></div>
-                <div className="flex justify-between"><span>Kembali</span><span>{formatCurrency(transaction.change)}</span></div>
+                <div className="flex justify-between"><span>{t('receipt.subtotal')}</span><span>{formatCurrency(transaction.totalAmount)}</span></div>
+                <div className="flex justify-between font-bold"><span>{t('receipt.total')}</span><span>{formatCurrency(transaction.totalAmount)}</span></div>
+                <div className="flex justify-between"><span>{t('receipt.payment', { method: transaction.paymentMethod })}</span><span>{formatCurrency(transaction.amountPaid)}</span></div>
+                <div className="flex justify-between"><span>{t('receipt.change')}</span><span>{formatCurrency(transaction.change)}</span></div>
             </div>
-            <p className="text-center mt-4 text-xs">Terima kasih telah berbelanja!</p>
+            <p className="text-center mt-4 text-xs">{t('receipt.thankYou')}</p>
         </div>
     );
 };
@@ -53,6 +55,7 @@ interface ReceiptModalProps {
 }
 
 export const ReceiptModal: React.FC<ReceiptModalProps> = ({ transaction, onClose }) => {
+    const { t } = useTranslation();
     
     const handlePrint = () => {
         window.print();
@@ -83,17 +86,17 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({ transaction, onClose
             <div className="w-full max-w-md relative">
                 <div className="glassmorphism p-6 rounded-lg shadow-xl printable-area">
                     <div className="flex justify-between items-center mb-4 no-print">
-                        <h3 className="text-xl font-bold">Transaksi Berhasil</h3>
+                        <h3 className="text-xl font-bold">{t('receipt.modalTitle')}</h3>
                         <button onClick={onClose}><XIcon className="w-6 h-6"/></button>
                     </div>
                     <Receipt transaction={transaction} />
                 </div>
                 <div className="flex justify-center gap-4 mt-4 no-print">
                     <button onClick={handlePrint} className="flex items-center btn-glow px-4 py-2 rounded-lg text-sm">
-                        <PrinterIcon className="w-5 h-5 mr-2" /> Cetak Struk
+                        <PrinterIcon className="w-5 h-5 mr-2" /> {t('receipt.print')}
                     </button>
                     <button onClick={handleShare} className="flex items-center bg-green-500/80 hover:bg-green-500 px-4 py-2 rounded-lg text-sm transition-colors">
-                        <ShareIcon className="w-5 h-5 mr-2" /> Bagikan
+                        <ShareIcon className="w-5 h-5 mr-2" /> {t('receipt.share')}
                     </button>
                 </div>
             </div>

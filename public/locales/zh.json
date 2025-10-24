@@ -1,0 +1,231 @@
+{
+  "app": {
+    "loadingPage": "正在加载页面...",
+    "loadingApp": "正在加载应用...",
+    "userError": "错误：找不到用户。",
+    "invalidStatus": "无效的应用状态。"
+  },
+  "sidebar": {
+    "title": "Kasir Amanah",
+    "cashier": "收银台",
+    "products": "产品",
+    "reports": "报告",
+    "settings": "设置",
+    "guestMode": "访客模式 (数据不会保存)",
+    "exitGuestMode": "退出访客模式",
+    "logout": "登出"
+  },
+  "header": {
+    "CASHIER": "收银台",
+    "PRODUCTS": "产品",
+    "REPORTS": "报告",
+    "SETTINGS": "设置"
+  },
+  "cashier": {
+    "searchPlaceholder": "搜索产品...",
+    "productCard": {
+      "stock": "库存: {stock}"
+    },
+    "cartTitle": "购物车",
+    "cartEmpty": "购物车是空的",
+    "total": "总计",
+    "cancel": "取消",
+    "pay": "支付",
+    "paymentModal": {
+      "title": "支付",
+      "totalBill": "总金额",
+      "paymentMethod": "支付方式",
+      "cash": "现金",
+      "card": "卡",
+      "qris": "二维码",
+      "amountPaid": "支付金额",
+      "change": "找零: {amount}",
+      "insufficientPayment": "现金金额无效或不足。",
+      "confirmPayment": "确认支付",
+      "passivePaymentMessage": "支付被视为正好。"
+    },
+    "alerts": {
+      "stockNotEnough": "{productName} 的库存不足。",
+      "stockOnly": "{productName} 只剩下 {stock} 件。",
+      "stockEmpty": "{productName} 已售罄。",
+      "guestTransactionError": "访客模式无法进行交易。此功能仅供演示。",
+      "emptyCartError": "购物车为空或总金额为零。无法进行支付。",
+      "transactionFailed": "保存交易失败。"
+    }
+  },
+  "receipt": {
+    "title": "Kasir Amanah 收据",
+    "receiptId": "ID: ",
+    "cashier": "收银员: ",
+    "thankYou": "感谢您的购买！",
+    "modalTitle": "交易成功",
+    "subtotal": "小计",
+    "total": "总计",
+    "payment": "支付 ({method})",
+    "change": "找零",
+    "print": "打印收据",
+    "share": "分享"
+  },
+  "products": {
+    "title": "产品管理",
+    "addProduct": "添加产品",
+    "searchPlaceholder": "搜索产品...",
+    "table": {
+      "name": "产品名称",
+      "buyPrice": "采购价",
+      "sellPrice": "售价",
+      "stock": "库存",
+      "actions": "操作"
+    },
+    "modal": {
+      "editTitle": "编辑产品",
+      "addTitle": "添加新产品",
+      "name": "产品名称",
+      "buyPrice": "采购价 (成本)",
+      "sellPrice": "售价",
+      "stock": "库存",
+      "unit": "单位 (个, 公斤等)",
+      "cancel": "取消",
+      "save": "保存"
+    },
+    "alerts": {
+      "nameRequired": "产品名称是必需的。",
+      "saveFailed": "保存失败: {error}",
+      "deleteConfirm": "您确定要删除此产品吗？",
+      "deleteFailed": "删除产品失败。"
+    }
+  },
+  "reports": {
+    "title": "销售报告",
+    "guestBanner": "访客模式 (只读): 您可以查看示例报告，但无法更改筛选器或查看交易详情。",
+    "from": "从",
+    "to": "到",
+    "totalRevenue": "总收入",
+    "totalProfit": "总利润",
+    "transactionCount": "交易次数",
+    "itemsSold": "售出商品数",
+    "bestSellers": "最畅销产品",
+    "sold": "已售",
+    "noData": "无数据。",
+    "transactionHistory": "交易历史",
+    "table": {
+      "time": "时间",
+      "transactionId": "交易ID",
+      "total": "总计"
+    },
+    "noTransactions": "此期间没有交易。"
+  },
+  "settings": {
+    "title": "设置",
+    "guestBanner": "访客模式 (只读): 您可以查看设置页面，但无法执行任何操作。",
+    "tabs": {
+      "data": "数据管理",
+      "staff": "员工管理",
+      "language": "语言",
+      "about": "关于"
+    },
+    "data": {
+      "title": "数据管理",
+      "backupTitle": "备份数据",
+      "backupDesc": "将所有数据 (产品、交易等) 保存到单个JSON文件中作为备份。",
+      "backupButton": "立即备份",
+      "restoreTitle": "恢复数据",
+      "restoreDesc": "从JSON备份文件恢复数据。这将覆盖所有当前数据。",
+      "restoreButton": "选择文件并恢复",
+      "dangerZone": "危险区域",
+      "resetDesc": "永久删除所有应用程序数据。此操作无法撤销。",
+      "resetButton": "重置所有数据",
+      "processing": "处理中...",
+      "alerts": {
+        "backupConfirm": "您将下载一个包含所有应用程序数据的备份文件。继续吗？",
+        "backupFailed": "创建备份失败。",
+        "restoreConfirm": "注意：恢复数据将删除所有当前数据，并用备份文件中的数据替换。此操作无法撤销。继续吗？",
+        "restoreFailed": "恢复数据失败。请确保备份文件有效。",
+        "resetConfirm": "警告：您将永久删除所有数据 (产品、交易、员工)。此操作无法撤销。您确定要继续吗？",
+        "resetPrompt": "要确认，请在下面输入 \"DELETE DATA\":",
+        "resetInvalidConfirmation": "确认不正确。操作已取消。",
+        "resetFailed": "重置数据失败。",
+        "resetSuccess": "所有数据已成功删除。应用程序将重新加载。"
+      }
+    },
+    "staff": {
+      "title": "员工管理",
+      "addStaff": "添加员工",
+      "table": {
+        "name": "姓名",
+        "role": "角色",
+        "loginDetails": "登录详情",
+        "actions": "操作"
+      },
+      "modal": {
+        "title": "添加新员工",
+        "name": "姓名",
+        "role": "角色",
+        "cashier": "收银员",
+        "admin": "管理员",
+        "pin": "PIN (4位数字)",
+        "email": "电子邮件",
+        "password": "密码",
+        "cancel": "取消",
+        "save": "保存"
+      },
+      "alerts": {
+        "pinInvalid": "收银员PIN必须是4位数字。",
+        "adminCredentialsRequired": "管理员电子邮件和密码是必需的。",
+        "addFailed": "添加员工失败: {error}",
+        "deleteAdminError": "无法删除唯一的管理员帐户。",
+        "deleteConfirm": "您确定要删除员工: {name} 吗？"
+      }
+    },
+    "language": {
+        "title": "语言选择",
+        "desc": "选择您喜欢的界面语言。"
+    }
+  },
+  "about": {
+      "subtitle": "可靠, 智能, 独立",
+      "principleTitle": "信任原则",
+      "dataSecurityTitle": "安全和离线数据",
+      "dataSecurityDesc": "基于Web和离线优先。您的数据安全地存储在您的设备上，加载后无需互联网连接即可完全运行。",
+      "transparencyTitle": "透明度",
+      "transparencyDesc": "每笔交易都清晰记录，关联当班收银员，实现完全问责。",
+      "fullControlTitle": "完全控制",
+      "fullControlDesc": "简单的备份和恢复功能使您可以完全控制您的业务数据。",
+      "techTitle": "技术"
+  },
+  "auth": {
+      "setup": {
+        "title": "新店设置",
+        "desc": "欢迎！创建第一个管理员帐户以开始使用 Kasir Amanah。",
+        "name": "全名",
+        "email": "电子邮件",
+        "password": "密码",
+        "confirmPassword": "确认密码",
+        "errorPasswordMismatch": "密码不匹配。",
+        "errorAllFieldsRequired": "所有字段均为必填项。",
+        "submitButton": "创建帐户并开始",
+        "submitting": "保存中...",
+        "haveAccount": "已经有店铺了？",
+        "loginHere": "在此登录",
+        "tryGuest": "以访客身份试用"
+      },
+      "login": {
+        "title": "登录",
+        "invalidPin": "PIN码无效。",
+        "adminLogin": "以管理员身份登录",
+        "guestLogin": "以访客身份进入 (演示模式)",
+        "noAccount": "还没有店铺？",
+        "createHere": "创建一个新的",
+        "adminForm": {
+            "title": "管理员登录",
+            "email": "电子邮件",
+            "password": "密码",
+            "invalidCredentials": "管理员电子邮件或密码不正确。",
+            "submitButton": "登录",
+            "submitting": "验证中...",
+            "backToPin": "返回PIN登录"
+        }
+      },
+      "guest": "访客"
+  }
+}

@@ -10,6 +10,7 @@ import {
   XIcon,
 } from './icons';
 import Clock from './Clock';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface SidebarProps {
   currentPage: Page;
@@ -21,11 +22,13 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate, onLogout, currentUser, isSidebarOpen, setIsSidebarOpen }) => {
+  const { t } = useTranslation();
+
   const navItems = [
-    { page: Page.CASHIER, label: 'Kasir', icon: ShoppingCart, roles: ['admin', 'cashier', 'guest'] },
-    { page: Page.PRODUCTS, label: 'Produk', icon: DatabaseIcon, roles: ['admin', 'guest'] },
-    { page: Page.REPORTS, label: 'Laporan', icon: TrendingUpIcon, roles: ['admin', 'guest'] },
-    { page: Page.SETTINGS, label: 'Pengaturan', icon: SettingsIcon, roles: ['admin', 'guest'] },
+    { page: Page.CASHIER, label: t('sidebar.cashier'), icon: ShoppingCart, roles: ['admin', 'cashier', 'guest'] },
+    { page: Page.PRODUCTS, label: t('sidebar.products'), icon: DatabaseIcon, roles: ['admin', 'guest'] },
+    { page: Page.REPORTS, label: t('sidebar.reports'), icon: TrendingUpIcon, roles: ['admin', 'guest'] },
+    { page: Page.SETTINGS, label: t('sidebar.settings'), icon: SettingsIcon, roles: ['admin', 'guest'] },
   ];
   
   const isGuest = currentUser?.role === 'guest';
@@ -71,7 +74,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate, onLogout, cu
         <div className="flex items-center justify-between h-20 border-b border-[var(--border-color)] px-4">
           <div className="flex items-center">
             <StoreIcon className="w-8 h-8 text-[var(--color-accent-cyan)]" />
-            <span className="ml-2 text-xl font-bold">Kasir Amanah</span>
+            <span className="ml-2 text-xl font-bold">{t('sidebar.title')}</span>
           </div>
           <button onClick={() => setIsSidebarOpen(false)} className="md:hidden text-gray-400 hover:text-white">
             <XIcon className="w-6 h-6" />
@@ -91,7 +94,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate, onLogout, cu
           <div className='mb-4 p-3 rounded-lg bg-black bg-opacity-20'>
               <p className="text-sm font-semibold text-white">{currentUser?.name}</p>
               <p className="text-xs text-[var(--color-text-secondary)] capitalize">
-                  {isGuest ? 'Mode Tamu (Data tidak disimpan)' : currentUser?.role}
+                  {isGuest ? t('sidebar.guestMode') : currentUser?.role}
               </p>
           </div>
           <button
@@ -99,7 +102,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate, onLogout, cu
             className="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-white bg-red-600/80 rounded-lg hover:bg-red-600 focus:outline-none ring-2 ring-transparent focus:ring-red-500/50 transition-all duration-300"
           >
             <LogOutIcon className="w-5 h-5 mr-2" />
-            {isGuest ? 'Keluar dari Mode Tamu' : 'Logout'}
+            {isGuest ? t('sidebar.exitGuestMode') : t('sidebar.logout')}
           </button>
         </div>
       </div>

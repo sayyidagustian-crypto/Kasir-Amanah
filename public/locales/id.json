@@ -1,0 +1,231 @@
+{
+  "app": {
+    "loadingPage": "Memuat halaman...",
+    "loadingApp": "Memuat aplikasi...",
+    "userError": "Error: Pengguna tidak ditemukan.",
+    "invalidStatus": "Status aplikasi tidak valid."
+  },
+  "sidebar": {
+    "title": "Kasir Amanah",
+    "cashier": "Kasir",
+    "products": "Produk",
+    "reports": "Laporan",
+    "settings": "Pengaturan",
+    "guestMode": "Mode Tamu (Data tidak disimpan)",
+    "exitGuestMode": "Keluar dari Mode Tamu",
+    "logout": "Logout"
+  },
+  "header": {
+    "CASHIER": "Kasir",
+    "PRODUCTS": "Produk",
+    "REPORTS": "Laporan",
+    "SETTINGS": "Pengaturan"
+  },
+  "cashier": {
+    "searchPlaceholder": "Cari produk...",
+    "productCard": {
+      "stock": "Stok: {stock}"
+    },
+    "cartTitle": "Keranjang",
+    "cartEmpty": "Keranjang kosong",
+    "total": "Total",
+    "cancel": "Batal",
+    "pay": "Bayar",
+    "paymentModal": {
+      "title": "Pembayaran",
+      "totalBill": "Total Tagihan",
+      "paymentMethod": "Metode Pembayaran",
+      "cash": "Tunai",
+      "card": "Kartu",
+      "qris": "QRIS",
+      "amountPaid": "Jumlah Dibayar",
+      "change": "Kembalian: {amount}",
+      "insufficientPayment": "Jumlah pembayaran tunai tidak valid atau kurang.",
+      "confirmPayment": "Konfirmasi Pembayaran",
+      "passivePaymentMessage": "Pembayaran dianggap pas."
+    },
+    "alerts": {
+      "stockNotEnough": "Stok {productName} tidak mencukupi.",
+      "stockOnly": "Stok {productName} hanya tersisa {stock}.",
+      "stockEmpty": "Stok {productName} habis.",
+      "guestTransactionError": "Mode Tamu tidak dapat melakukan transaksi. Fitur ini hanya untuk demo.",
+      "emptyCartError": "Keranjang kosong atau total belanja nol. Tidak dapat melanjutkan pembayaran.",
+      "transactionFailed": "Gagal menyimpan transaksi."
+    }
+  },
+  "receipt": {
+    "title": "Struk Kasir Amanah",
+    "receiptId": "ID: ",
+    "cashier": "Kasir: ",
+    "thankYou": "Terima kasih telah berbelanja!",
+    "modalTitle": "Transaksi Berhasil",
+    "subtotal": "Subtotal",
+    "total": "TOTAL",
+    "payment": "Bayar ({method})",
+    "change": "Kembali",
+    "print": "Cetak Struk",
+    "share": "Bagikan"
+  },
+  "products": {
+    "title": "Manajemen Produk",
+    "addProduct": "Tambah Produk",
+    "searchPlaceholder": "Cari produk...",
+    "table": {
+      "name": "Nama Produk",
+      "buyPrice": "Harga Beli",
+      "sellPrice": "Harga Jual",
+      "stock": "Stok",
+      "actions": "Aksi"
+    },
+    "modal": {
+      "editTitle": "Edit Produk",
+      "addTitle": "Tambah Produk Baru",
+      "name": "Nama Produk",
+      "buyPrice": "Harga Beli (Modal)",
+      "sellPrice": "Harga Jual",
+      "stock": "Stok",
+      "unit": "Satuan (pcs, kg, etc)",
+      "cancel": "Batal",
+      "save": "Simpan"
+    },
+    "alerts": {
+      "nameRequired": "Nama produk wajib diisi.",
+      "saveFailed": "Gagal menyimpan: {error}",
+      "deleteConfirm": "Anda yakin ingin menghapus produk ini?",
+      "deleteFailed": "Gagal menghapus produk."
+    }
+  },
+  "reports": {
+    "title": "Laporan Penjualan",
+    "guestBanner": "Mode Tamu (Hanya Lihat): Anda dapat melihat contoh laporan, namun tidak dapat mengubah filter atau melihat detail transaksi.",
+    "from": "Dari",
+    "to": "Sampai",
+    "totalRevenue": "Total Pendapatan",
+    "totalProfit": "Total Laba",
+    "transactionCount": "Jumlah Transaksi",
+    "itemsSold": "Item Terjual",
+    "bestSellers": "Produk Terlaris",
+    "sold": "terjual",
+    "noData": "Tidak ada data.",
+    "transactionHistory": "Riwayat Transaksi",
+    "table": {
+      "time": "Waktu",
+      "transactionId": "ID Transaksi",
+      "total": "Total"
+    },
+    "noTransactions": "Tidak ada transaksi pada periode ini."
+  },
+  "settings": {
+    "title": "Pengaturan",
+    "guestBanner": "Mode Tamu (Hanya Lihat): Anda dapat melihat halaman pengaturan, namun tidak dapat melakukan aksi apa pun.",
+    "tabs": {
+      "data": "Manajemen Data",
+      "staff": "Manajemen Staf",
+      "language": "Bahasa",
+      "about": "Tentang Aplikasi"
+    },
+    "data": {
+      "title": "Manajemen Data",
+      "backupTitle": "Backup Data",
+      "backupDesc": "Simpan semua data (produk, transaksi, dll) ke dalam satu file JSON sebagai cadangan.",
+      "backupButton": "Backup Sekarang",
+      "restoreTitle": "Restore Data",
+      "restoreDesc": "Pulihkan data dari file backup JSON. Ini akan menimpa semua data yang ada saat ini.",
+      "restoreButton": "Pilih File & Pulihkan",
+      "dangerZone": "Zona Berbahaya",
+      "resetDesc": "Hapus semua data aplikasi secara permanen. Aksi ini tidak dapat dibatalkan.",
+      "resetButton": "Reset Semua Data",
+      "processing": "Memproses...",
+      "alerts": {
+        "backupConfirm": "Anda akan mengunduh file backup berisi semua data aplikasi. Lanjutkan?",
+        "backupFailed": "Gagal membuat backup.",
+        "restoreConfirm": "PERHATIAN: Memulihkan data akan MENGHAPUS SEMUA DATA SAAT INI dan menggantinya dengan data dari file backup. Aksi ini tidak bisa dibatalkan. Lanjutkan?",
+        "restoreFailed": "Gagal memulihkan data. Pastikan file backup valid.",
+        "resetConfirm": "PERINGATAN KERAS: Anda akan MENGHAPUS SELURUH DATA (produk, transaksi, staf) secara permanen. Aksi ini tidak dapat dibatalkan. Yakin ingin melanjutkan?",
+        "resetPrompt": "Untuk konfirmasi, ketik \"HAPUS DATA\" di bawah ini:",
+        "resetInvalidConfirmation": "Konfirmasi salah. Aksi dibatalkan.",
+        "resetFailed": "Gagal mereset data.",
+        "resetSuccess": "Semua data berhasil dihapus. Aplikasi akan dimuat ulang."
+      }
+    },
+    "staff": {
+      "title": "Manajemen Staf",
+      "addStaff": "Tambah Staf",
+      "table": {
+        "name": "Nama",
+        "role": "Role",
+        "loginDetails": "Detail Login",
+        "actions": "Aksi"
+      },
+      "modal": {
+        "title": "Tambah Staf Baru",
+        "name": "Nama",
+        "role": "Role",
+        "cashier": "Kasir",
+        "admin": "Admin",
+        "pin": "PIN (4 digit)",
+        "email": "Email",
+        "password": "Password",
+        "cancel": "Batal",
+        "save": "Simpan"
+      },
+      "alerts": {
+        "pinInvalid": "PIN kasir harus 4 digit.",
+        "adminCredentialsRequired": "Email dan password admin wajib diisi.",
+        "addFailed": "Gagal menambah staf: {error}",
+        "deleteAdminError": "Tidak bisa menghapus satu-satunya admin.",
+        "deleteConfirm": "Anda yakin ingin menghapus staf: {name}?"
+      }
+    },
+    "language": {
+        "title": "Pilihan Bahasa",
+        "desc": "Pilih bahasa antarmuka yang Anda inginkan."
+    }
+  },
+  "about": {
+      "subtitle": "Amanah, Cerdas, dan Mandiri",
+      "principleTitle": "Prinsip Amanah",
+      "dataSecurityTitle": "Data Aman & Offline",
+      "dataSecurityDesc": "Berbasis Web & Offline-First. Data Anda disimpan aman di perangkat, memungkinkan aplikasi berfungsi penuh tanpa koneksi internet setelah dimuat.",
+      "transparencyTitle": "Transparansi",
+      "transparencyDesc": "Setiap transaksi dicatat dengan jelas, menautkan kasir yang bertugas untuk akuntabilitas penuh.",
+      "fullControlTitle": "Kontrol Penuh",
+      "fullControlDesc": "Fitur backup dan restore yang mudah memberi Anda kendali penuh atas data bisnis Anda.",
+      "techTitle": "Teknologi"
+  },
+  "auth": {
+      "setup": {
+        "title": "Setup Toko Baru",
+        "desc": "Selamat datang! Buat akun admin pertama untuk mulai menggunakan Kasir Amanah.",
+        "name": "Nama Lengkap",
+        "email": "Email",
+        "password": "Password",
+        "confirmPassword": "Konfirmasi Password",
+        "errorPasswordMismatch": "Password tidak cocok.",
+        "errorAllFieldsRequired": "Semua field wajib diisi.",
+        "submitButton": "Buat Akun & Mulai",
+        "submitting": "Menyimpan...",
+        "haveAccount": "Sudah punya toko?",
+        "loginHere": "Login di sini",
+        "tryGuest": "Coba sebagai Tamu"
+      },
+      "login": {
+        "title": "Login",
+        "invalidPin": "PIN tidak valid.",
+        "adminLogin": "Login sebagai Admin",
+        "guestLogin": "Masuk sebagai Tamu (Mode Coba)",
+        "noAccount": "Belum punya toko?",
+        "createHere": "Buat Baru",
+        "adminForm": {
+            "title": "Login Admin",
+            "email": "Email",
+            "password": "Password",
+            "invalidCredentials": "Email atau password admin salah.",
+            "submitButton": "Login",
+            "submitting": "Memverifikasi...",
+            "backToPin": "Kembali ke Login PIN"
+        }
+      },
+      "guest": "Tamu"
+  }
+}
